@@ -1,0 +1,70 @@
+model:
+  model_path: artifacts/maple-preview
+  tokenizer_path: data/maple-nemotron/tokenizer
+  model_config:
+    qat_ternary: true
+    training_objective: fast_dllm_v2
+    bdlm_block_size: 32
+    bdlm_sampling_eps: 0.001
+    mask_token_id: 151669
+    output_router_logits: false
+    router_aux_loss_coef: 0.0
+  ops_implementation:
+    attn_implementation: flex_attention
+    moe_implementation: fused_quack
+    cross_entropy_loss_implementation: chunk_loss
+    rms_norm_implementation: liger_kernel
+    rotary_pos_emb_implementation: liger_kernel
+    load_balancing_loss_implementation: triton
+
+data:
+  train_path: data/maple-nemotron-1b/data
+  data_type: tokenized
+  datasets_type: iterable
+  max_seq_len: 2048
+  # 381 steps * 256 sequences * 2,048 source tokens.
+  train_size: 199753728
+  train_sample: 12192
+
+train:
+  dyn_bsz: false
+  freeze_moe_router: true
+  accelerator:
+    ulysses_size: 1
+    ep_size: 1
+    fsdp_config:
+      fsdp_mode: fsdp2
+      reshard_after_forward: true
+      reshard_after_backward: true
+      mixed_precision:
+        enable: true
+  gradient_checkpointing:
+    enable: true
+    early_stop: false
+  global_batch_size: 256
+  micro_batch_size: 32
+  optimizer:
+    type: adamw
+    lr: 1.0e-5
+    weight_decay: 0.0
+    betas: [0.9, 0.999]
+    lr_warmup_ratio: 0.2
+    lr_decay_style: constant
+    max_grad_norm: 1.0
+  num_train_epochs: 1
+  init_device: meta
+  enable_full_determinism: false
+  empty_cache_steps: 500
+  moe_load_balance_monitor_interval: 20
+  weight_norm_interval: 50
+  checkpoint:
+    output_dir: outputs/maple-fast-dllm-v2-frozen-router-200m
+    manager: dcp
+    save_steps: 127
+    save_epochs: 0
+    save_hf_weights: false
+    keep_last_n: 2
+  wandb:
+    enable: true
+    project: maple-bdlm
+    name: maple-fast-dllm-v2-frozen-router-200m

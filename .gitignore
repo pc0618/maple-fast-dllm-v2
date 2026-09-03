@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+.venv/
+/artifacts/
+/data/
+/evals/exports/
+/outputs/
+/wandb/

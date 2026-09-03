@@ -1,0 +1,758 @@
+diff --git a/tests/data/test_collators.py b/tests/data/test_collators.py
+index 4de365c7..a0841a6a 100644
+--- a/tests/data/test_collators.py
++++ b/tests/data/test_collators.py
+@@ -51,6 +51,31 @@ def test_seqcls_collator_sp_disabled(monkeypatch, features_two_samples):
+     assert out["max_length_k"] == exp_max_length
+ 
+ 
++def test_collator_can_preserve_text_batch(monkeypatch):
++    import veomni.data.data_collator as m
++
++    monkeypatch.setattr(m, "get_parallel_state", lambda: _fake_ps(sp_enabled=False))
++    features = [
++        {
++            "input_ids": torch.tensor([1, 2]),
++            "attention_mask": torch.ones(2, dtype=torch.long),
++            "labels": torch.tensor([1, 2]),
++            "position_ids": torch.arange(2),
++        },
++        {
++            "input_ids": torch.tensor([3, 4]),
++            "attention_mask": torch.ones(2, dtype=torch.long),
++            "labels": torch.tensor([3, 4]),
++            "position_ids": torch.arange(2),
++        },
++    ]
++
++    out = m.MainCollator(pack_sequences=False)(features)
++
++    assert out["input_ids"].shape == (2, 2)
++    assert torch.equal(out["labels"], torch.tensor([[1, 2], [3, 4]]))
++
++
+ def test_seqcls_collator_sp_enabled(monkeypatch, features_two_samples):
+     import veomni.data.data_collator as m
+ 
+diff --git a/tests/ops/test_chunk_loss.py b/tests/ops/test_chunk_loss.py
+index c4983a9a..cf5d05f0 100644
+--- a/tests/ops/test_chunk_loss.py
++++ b/tests/ops/test_chunk_loss.py
+@@ -34,3 +34,22 @@ def test_chunk_loss_reuses_valid_token_denominator(monkeypatch):
+     assert denominator_sum_calls == 1
+     assert hidden_states.grad is not None
+     assert weights.grad is not None
++
++
++def test_chunk_size_caps_tokens_across_batch(monkeypatch):
++    monkeypatch.setattr(chunk_loss_module, "get_parallel_state", lambda: SimpleNamespace(sp_enabled=False))
++    linear = chunk_loss_module.F.linear
++    tile_sizes = []
++
++    def record_tile_size(input, *args, **kwargs):
++        tile_sizes.append(input.shape[0])
++        return linear(input, *args, **kwargs)
++
++    monkeypatch.setattr(chunk_loss_module.F, "linear", record_tile_size)
++    hidden_states = torch.randn(2, 6, 4, requires_grad=True)
++    weights = torch.randn(8, 4, requires_grad=True)
++    labels = torch.randint(0, 8, (2, 6))
++
++    chunk_loss_module.chunk_loss_function(hidden_states, weights, labels, chunk_size=2)[0].backward()
++
++    assert max(tile_sizes) == 2
+diff --git a/tests/ops/test_seqcls_loss.py b/tests/ops/test_seqcls_loss.py
+index 767663c9..32364533 100644
+--- a/tests/ops/test_seqcls_loss.py
++++ b/tests/ops/test_seqcls_loss.py
+@@ -21,6 +21,22 @@ class _FakePS:
+         self.sp_enabled = sp_enabled
+ 
+ 
++def test_causal_loss_accepts_noncontiguous_hidden_states(monkeypatch):
++    monkeypatch.setattr(m, "get_parallel_state", lambda: _FakePS(sp_enabled=False))
++    hidden_states = torch.randn(2, 3, 4).transpose(0, 1).requires_grad_()
++    labels = torch.randint(0, 5, hidden_states.shape[:2])
++
++    loss, logits, _aux = m.ForCausalLMLoss(
++        labels=labels,
++        vocab_size=5,
++        hidden_states=hidden_states,
++        weights=torch.randn(5, 4),
++    )
++
++    loss.backward()
++    assert torch.isfinite(loss) and logits.shape == (6, 5) and hidden_states.grad is not None
++
++
+ def test_seqcls_loss_logits_path_manual_handcalc(monkeypatch):
+     """
+     Case:
+diff --git a/tests/trainer/test_aux_metrics.py b/tests/trainer/test_aux_metrics.py
+index e689ef72..105afe35 100644
+--- a/tests/trainer/test_aux_metrics.py
++++ b/tests/trainer/test_aux_metrics.py
+@@ -62,6 +62,12 @@ class _PlainOutput:
+         self.loss = loss
+ 
+ 
++class _MoeOutput(_PlainOutput):
++    def __init__(self, loss, aux_loss):
++        super().__init__(loss)
++        self.aux_loss = aux_loss
++
++
+ @pytest.fixture
+ def identity_loss(monkeypatch):
+     """Neutralize ``mean_global_loss``: it all-reduces, so it needs a process group.
+@@ -133,6 +139,18 @@ def test_output_without_aux_metrics_attribute_is_unchanged(identity_loss):
+     assert aux_metrics == {}
+ 
+ 
++def test_moe_router_aux_loss_is_reported_without_entering_objective(identity_loss):
++    trainer = _bare_trainer()
++    outputs = _MoeOutput(torch.tensor(2.0, requires_grad=True), torch.tensor(1.25, requires_grad=True))
++
++    loss, loss_dict, aux_metrics = BaseTrainer.postforward(trainer, outputs, {})
++
++    assert loss.item() == pytest.approx(2.0)
++    assert list(loss_dict) == ["foundation_loss"]
++    assert aux_metrics["router_aux_loss"].item() == pytest.approx(1.25)
++    assert not aux_metrics["router_aux_loss"].requires_grad
++
++
+ @pytest.mark.parametrize("reported", [None, {}], ids=["none", "empty"])
+ def test_absent_aux_metrics_add_no_keys(identity_loss, reported):
+     trainer = _bare_trainer()
+@@ -396,3 +414,10 @@ def test_environ_meter_tolerates_a_step_without_aux_metrics(monkeypatch, aux_met
+ 
+     assert callback.trainer.step_train_metrics["training/foundation_loss"] == pytest.approx(2.0)
+     assert callback.trainer.step_train_metrics["training/grad_norm"] == pytest.approx(0.5)
++
++
++def test_matrix_weight_norms_ignores_vectors():
++    model = torch.nn.Sequential(torch.nn.Linear(2, 2, bias=False), torch.nn.LayerNorm(2))
++    model[0].weight.data.fill_(3)
++
++    assert trace_callback_module.matrix_weight_norms(model) == {"weights/frobenius/0/weight": 6.0}
+diff --git a/tests/utils/test_count_flops.py b/tests/utils/test_count_flops.py
+index 8ece65a3..b1a2af76 100644
+--- a/tests/utils/test_count_flops.py
++++ b/tests/utils/test_count_flops.py
+@@ -116,6 +116,22 @@ def gpt_oss_counter(gpt_oss_config):
+     return VeomniFlopsCounter(gpt_oss_config)
+ 
+ 
++@pytest.fixture
++def maple_config():
++    return SimpleNamespace(
++        model_type="maple",
++        hidden_size=8,
++        vocab_size=32,
++        num_hidden_layers=2,
++        num_attention_heads=2,
++        num_key_value_heads=1,
++        head_dim=4,
++        num_experts=4,
++        num_experts_per_tok=2,
++        moe_intermediate_size=16,
++    )
++
++
+ @pytest.fixture
+ def deepseek_v4_config():
+     config = _load_toy_config("tests/toy_config/deepseek_v4_toy")
+@@ -562,6 +578,18 @@ class TestGptOssFlops:
+         assert full_flops > mixed_flops
+ 
+ 
++class TestMapleFlops:
++    pytestmark = pytest.mark.usefixtures("mock_device_flops")
++
++    def test_reuses_qwen3_moe_estimator(self, maple_config):
++        maple_flops, promised = VeomniFlopsCounter(maple_config).estimate_flops([64], delta_time=1.0)
++        maple_config.model_type = "qwen3_moe"
++        qwen_flops, _ = VeomniFlopsCounter(maple_config).estimate_flops([64], delta_time=1.0)
++
++        assert maple_flops == qwen_flops
++        assert promised == 1000.0
++
++
+ class TestDeepseekV4Flops:
+     pytestmark = pytest.mark.usefixtures("mock_device_flops")
+ 
+diff --git a/tests/utils/test_moe_monitor.py b/tests/utils/test_moe_monitor.py
+index f004a028..4783da2e 100644
+--- a/tests/utils/test_moe_monitor.py
++++ b/tests/utils/test_moe_monitor.py
+@@ -215,6 +215,7 @@ def test_compute_metrics_key_shape():
+             {f"moe/max_vio/layer_{i}" for i in range(2)}
+             | {f"moe/min_vio/layer_{i}" for i in range(2)}
+             | {f"moe/avg_vio/layer_{i}" for i in range(2)}
++            | {f"moe/router_entropy/layer_{i}" for i in range(2)}
+             | {
+                 "moe/max_vio/max",
+                 "moe/max_vio/avg",
+@@ -222,10 +223,12 @@ def test_compute_metrics_key_shape():
+                 "moe/min_vio/avg",
+                 "moe/avg_vio/max",
+                 "moe/avg_vio/avg",
++                "moe/router_entropy/avg",
+                 "moe/expert_load_heatmap",
+             }
+         )
+         assert set(metrics.keys()) == expected_keys
++        assert metrics["moe/router_entropy/avg"] == 0.0
+         assert metrics["moe/expert_load_heatmap"].__class__.__module__.startswith("PIL.")
+     finally:
+         set_active_monitor(None)
+diff --git a/veomni/arguments/arguments_types.py b/veomni/arguments/arguments_types.py
+index 4e5e697d..4dccd436 100644
+--- a/veomni/arguments/arguments_types.py
++++ b/veomni/arguments/arguments_types.py
+@@ -662,6 +662,14 @@ class CheckpointConfig:
+         default=True,
+         metadata={"help": "Save the huggingface format weights to the last checkpoint dir."},
+     )
++    keep_last_n: int = field(
++        default=0,
++        metadata={"help": "Retain only the newest N distributed checkpoints. 0 keeps all checkpoints."},
++    )
++
++    def __post_init__(self):
++        if self.keep_last_n < 0:
++            raise ValueError("keep_last_n must be non-negative.")
+ 
+ 
+ @dataclass
+@@ -712,6 +720,10 @@ class TrainingArguments:
+         default=None,
+         metadata={"help": "Global batch size. If None, use `micro_batch_size` * `data_parallel_size`."},
+     )
++    freeze_moe_router: bool = field(
++        default=False,
++        metadata={"help": "Freeze MoE top-k router weights while leaving experts and other weights trainable."},
++    )
+     num_train_epochs: int = field(
+         default=1,
+         metadata={"help": "Epochs to train."},
+@@ -824,6 +836,10 @@ class TrainingArguments:
+             )
+         },
+     )
++    weight_norm_interval: int = field(
++        default=0,
++        metadata={"help": "Log distributed Frobenius norms of model weight matrices to W&B every N steps."},
++    )
+ 
+     # sub-argument groups
+     optimizer: OptimizerConfig = field(default_factory=OptimizerConfig)
+@@ -1511,7 +1527,7 @@ class DataArguments:
+             "help": "Number of samples for training to compute training steps for non-dynamic batch dataloader."
+         },
+     )
+-    data_type: Literal["plaintext", "conversation", "diffusion", "classification", "dpo"] = field(
++    data_type: Literal["plaintext", "conversation", "tokenized", "diffusion", "classification", "dpo"] = field(
+         default="conversation",
+         metadata={"help": "Type of the training data."},
+     )
+@@ -1566,6 +1582,8 @@ class DataArguments:
+                 self.text_keys = "text"
+             elif self.data_type == "dpo":
+                 self.text_keys = "chosen"
++            elif self.data_type == "tokenized":
++                self.text_keys = "input_ids"
+             else:
+                 raise ValueError(f"Unknown data type: {self.data_type}")
+ 
+diff --git a/veomni/data/data_collator.py b/veomni/data/data_collator.py
+index d89b1e75..06d110b9 100644
+--- a/veomni/data/data_collator.py
++++ b/veomni/data/data_collator.py
+@@ -45,6 +45,7 @@ MetadataCollateFunc = Callable[[Dict[str, Any], Dict[str, int]], None]
+ logger = logging.get_logger(__name__)
+ 
+ _LINEAR_ATTN_TAIL_PADDING_LENGTH = "_linear_attn_tail_padding_length"
++_TEXT_SEQUENCE_KEYS = {"input_ids", "labels", "attention_mask", "position_ids"}
+ 
+ 
+ def add_flash_attention_kwargs_from_position_ids(
+@@ -219,6 +220,7 @@ class PrecomputePositionIDsCollator(DataCollator):
+ class PackingCollator(DataCollator):
+     collate_infos: Dict[str, DataCollateInfo] = field(default_factory=lambda: DEFAULT_DATA_COLLATE_INFO.copy())
+     pad_to_length: int = False
++    pack_sequences: bool = True
+     seq_classification: bool = (
+         False  # whether the training task is sequence classification, if true, do not mask boundary labels
+     )
+@@ -271,6 +273,10 @@ class PackingCollator(DataCollator):
+                 batch[key].append(feature[key])
+ 
+         for key in batch.keys():
++            if not self.pack_sequences and key in _TEXT_SEQUENCE_KEYS:
++                batch[key] = default_collate(batch[key])
++                continue
++
+             collate_info: DataCollateInfo = self.collate_infos.get(key, None)
+             if collate_info is None:
+                 try:
+@@ -432,6 +438,7 @@ class MainCollator(DataCollator):
+     data_collate_info: Dict[str, Union[DataCollateInfo, tuple, Dict]] = field(default_factory=lambda: {})
+     pad_to_length: bool = False
+     seq_classification: bool = False
++    pack_sequences: bool = True
+     metadata_collate_func: Optional[MetadataCollateFunc] = None
+ 
+     """
+@@ -444,6 +451,8 @@ class MainCollator(DataCollator):
+             Whether to pad sequence to a fixed length. Default is False.
+         seq_classification:
+             If True, sequence classification task. Default is False.
++        pack_sequences:
++            If False, stack text samples into a batch instead of packing them into one row.
+         metadata_collate_func:
+             Optional model-provided hook (``model.get_metadata_collate_func()``)
+             that derives ``multimodal_metadata`` from the packed + SP-padded
+@@ -479,6 +488,7 @@ class MainCollator(DataCollator):
+                 collate_infos=self.collate_infos,
+                 pad_to_length=self.pad_to_length,
+                 seq_classification=self.seq_classification,
++                pack_sequences=self.pack_sequences,
+                 metadata_collate_func=self.metadata_collate_func,
+             )
+         )
+diff --git a/veomni/data/data_transform.py b/veomni/data/data_transform.py
+index f0d4b810..480c1dde 100644
+--- a/veomni/data/data_transform.py
++++ b/veomni/data/data_transform.py
+@@ -92,6 +92,15 @@ def process_plaintext_example(
+     return examples
+ 
+ 
++@DATA_TRANSFORM_REGISTRY.register("tokenized")
++def process_tokenized_example(example: Dict[str, Any], **kwargs) -> List[Dict[str, "torch.Tensor"]]:
++    del kwargs
++    keys = ("input_ids", "attention_mask", "labels", "position_ids")
++    if any(key not in example for key in keys):
++        raise ValueError(f"Tokenized examples must contain {keys}.")
++    return [{key: torch.tensor(example[key], dtype=torch.long) for key in keys}]
++
++
+ @DATA_TRANSFORM_REGISTRY.register("conversation")
+ def process_conversation_example(
+     example: Dict[str, Any],
+diff --git a/veomni/models/transformers/__init__.py b/veomni/models/transformers/__init__.py
+index cb4668c2..5ab2bc19 100644
+--- a/veomni/models/transformers/__init__.py
++++ b/veomni/models/transformers/__init__.py
+@@ -20,6 +20,7 @@ from . import (
+     glm_moe_dsa,
+     gpt_oss,
+     llama,
++    maple,
+     movqgan,
+     qwen2,
+     qwen2_5_omni,
+@@ -44,6 +45,7 @@ __all__ = [
+     "gemma3",
+     "gpt_oss",
+     "llama",
++    "maple",
+     "movqgan",
+     "qwen2",
+     "qwen2_5_omni",
+diff --git a/veomni/ops/kernels/cross_entropy/__init__.py b/veomni/ops/kernels/cross_entropy/__init__.py
+index 8aa70290..07efdf5b 100644
+--- a/veomni/ops/kernels/cross_entropy/__init__.py
++++ b/veomni/ops/kernels/cross_entropy/__init__.py
+@@ -195,11 +195,11 @@ def ForCausalLMLoss(
+         shift_labels = labels
+ 
+     # Flatten the tokens
+-    shift_labels = shift_labels.view(-1)
++    shift_labels = shift_labels.reshape(-1)
+     if hidden_states is not None:
+-        hidden_states = hidden_states.view(-1, hidden_states.size(-1))
++        hidden_states = hidden_states.reshape(-1, hidden_states.size(-1))
+     if logits is not None:
+-        logits = logits.view(-1, vocab_size)
++        logits = logits.reshape(-1, vocab_size)
+     # Enable model parallelism
+     shift_labels = shift_labels.to(device)
+ 
+@@ -306,11 +306,11 @@ def ForSequenceClassificationLoss(
+     target = labels
+ 
+     # Flatten the tokens
+-    target = target.view(-1)
++    target = target.reshape(-1)
+     if hidden_states is not None:
+-        hidden_states = hidden_states.view(-1, hidden_states.size(-1))
++        hidden_states = hidden_states.reshape(-1, hidden_states.size(-1))
+     if logits is not None:
+-        logits = logits.view(-1, num_labels)
++        logits = logits.reshape(-1, num_labels)
+     # Enable model parallelism
+     target = target.to(device)
+ 
+diff --git a/veomni/ops/kernels/cross_entropy/chunk_loss.py b/veomni/ops/kernels/cross_entropy/chunk_loss.py
+index aed5a396..7668fd12 100644
+--- a/veomni/ops/kernels/cross_entropy/chunk_loss.py
++++ b/veomni/ops/kernels/cross_entropy/chunk_loss.py
+@@ -106,6 +106,9 @@ def chunk_loss_function(
+         labels = labels[..., 1:].contiguous()
+         hidden_states = hidden_states[..., :-1, :].contiguous()
+ 
++    labels = labels.reshape(1, -1)
++    hidden_states = hidden_states.reshape(1, -1, hidden_states.size(-1))
++
+     def ce_loss_func(hidden_states, weight, bias, labels, num_items_in_batch, ignore_index=-100, **kwargs):
+         # Use ``reshape`` instead of ``view`` because the per-chunk tensors come
+         # from ``torch.split(..., dim=1)`` on contiguous parents, which yields
+diff --git a/veomni/ops/kernels/load_balancing_loss/triton.py b/veomni/ops/kernels/load_balancing_loss/triton.py
+index 0eb0ca73..8528a95d 100644
+--- a/veomni/ops/kernels/load_balancing_loss/triton.py
++++ b/veomni/ops/kernels/load_balancing_loss/triton.py
+@@ -49,7 +49,7 @@ def _lb_loss_fwd_kernel(
+     BLOCK_N: tl.constexpr,
+     HAS_MASK: tl.constexpr,
+ ):
+-    block_idx = tl.program_id(0)
++    block_idx = tl.program_id(0).to(tl.int64)
+     row_start = block_idx * BLOCK_N
+     expert_offs = tl.arange(0, BLOCK_E)
+     emask = expert_offs < E
+@@ -128,7 +128,7 @@ def _lb_loss_bwd_kernel(
+         d(loss)/d(logits_n[j])
+             = E / N^2 * softmax_n[j] * (count[j] - dot(count, softmax_n))
+     """
+-    row_idx = tl.program_id(0)
++    row_idx = tl.program_id(0).to(tl.int64)
+     expert_offs = tl.arange(0, BLOCK_E)
+     emask = expert_offs < E
+ 
+diff --git a/veomni/ops/kernels/moe/group_gemm.py b/veomni/ops/kernels/moe/group_gemm.py
+index a94d2a35..a9db3ea9 100644
+--- a/veomni/ops/kernels/moe/group_gemm.py
++++ b/veomni/ops/kernels/moe/group_gemm.py
+@@ -146,13 +146,9 @@ class TritonFusedMoeExpertFunction(torch.autograd.Function):
+             fc2_weight,
+             hidden_states,
+             scatter_index,
+-            scatter_output,
+             cumsum_t,
+             fc1_1_output,
+             fc1_2_output,
+-            fc1_activation,
+-            scattered_gate_weight,
+-            fc1_weighted_output,
+             mask_fc1_1 if mask_fc1_1 is not None else torch.empty(0, device=hidden_states.device),
+             mask_fc1_2 if mask_fc1_2 is not None else torch.empty(0, device=hidden_states.device),
+         )
+@@ -168,13 +164,9 @@ class TritonFusedMoeExpertFunction(torch.autograd.Function):
+             fc2_weight,
+             hidden_states,
+             scatter_index,
+-            scatter_output,
+             cumsum_t,
+             fc1_1_output,
+             fc1_2_output,
+-            fc1_activation,
+-            scattered_gate_weight,
+-            fc1_weighted_output,
+             mask_fc1_1,
+             mask_fc1_2,
+         ) = ctx.saved_tensors
+@@ -184,6 +176,14 @@ class TritonFusedMoeExpertFunction(torch.autograd.Function):
+ 
+         # MOE Step 10
+         grad_fc2_output = moe_scatter(grad_output, scatter_index)
++        scatter_output = moe_scatter(hidden_states, scatter_index)
++        fc1_1_activation = torch.ops.aten.silu(fc1_1_output)
++        fc1_activation = fc1_1_activation * fc1_2_output
++        scattered_gate_weight = torch.empty(
++            (gate_weights.numel(), 1), dtype=gate_weights.dtype, device=gate_weights.device
++        )
++        scattered_gate_weight[scatter_index.flatten()] = gate_weights.reshape(-1, 1)
++        fc1_weighted_output = fc1_activation * scattered_gate_weight
+         # ``max_M`` for grouped GEMM is a per-expert launch bound. Duplicate
+         # top-k routes can make one expert receive more rows than the original
+         # token count, so the total scattered row count is a safe bound.
+@@ -224,9 +224,6 @@ class TritonFusedMoeExpertFunction(torch.autograd.Function):
+         grad_gate_weight = grad_scattered_gate_weight[scatter_index.flatten()]
+         grad_gate_weight = grad_gate_weight.reshape(gate_weights.shape)
+ 
+-        # recompute during backward
+-        fc1_1_activation = torch.ops.aten.silu(fc1_1_output)
+-
+         # MOE Step 7
+         grad_fc1_1_activation = grad_fc1_activation * fc1_2_output
+         grad_fc1_2_output = fc1_1_activation * grad_fc1_activation
+@@ -391,13 +388,9 @@ class MergedFc1TritonFusedMoeExpertFunction(torch.autograd.Function):
+             fc2_weight,
+             hidden_states,
+             scatter_index,
+-            scatter_output,
+             cumsum_t,
+             fc1_1_output,
+             fc1_2_output,
+-            fc1_activation,
+-            scattered_gate_weight,
+-            fc1_weighted_output,
+             mask_fc1_1 if mask_fc1_1 is not None else torch.empty(0, device=hidden_states.device),
+             mask_fc1_2 if mask_fc1_2 is not None else torch.empty(0, device=hidden_states.device),
+         )
+@@ -412,13 +405,9 @@ class MergedFc1TritonFusedMoeExpertFunction(torch.autograd.Function):
+             fc2_weight,
+             hidden_states,
+             scatter_index,
+-            scatter_output,
+             cumsum_t,
+             fc1_1_output,
+             fc1_2_output,
+-            fc1_activation,
+-            scattered_gate_weight,
+-            fc1_weighted_output,
+             mask_fc1_1,
+             mask_fc1_2,
+         ) = ctx.saved_tensors
+@@ -428,6 +417,14 @@ class MergedFc1TritonFusedMoeExpertFunction(torch.autograd.Function):
+ 
+         # MOE Step 10
+         grad_fc2_output = moe_scatter(grad_output, scatter_index)
++        scatter_output = moe_scatter(hidden_states, scatter_index)
++        fc1_1_activation = torch.ops.aten.silu(fc1_1_output)
++        fc1_activation = fc1_1_activation * fc1_2_output
++        scattered_gate_weight = torch.empty(
++            (gate_weights.numel(), 1), dtype=gate_weights.dtype, device=gate_weights.device
++        )
++        scattered_gate_weight[scatter_index.flatten()] = gate_weights.reshape(-1, 1)
++        fc1_weighted_output = fc1_activation * scattered_gate_weight
+         # ``max_M`` for grouped GEMM is a per-expert launch bound. Duplicate
+         # top-k routes can make one expert receive more rows than the original
+         # token count, so the total scattered row count is a safe bound.
+@@ -464,9 +461,6 @@ class MergedFc1TritonFusedMoeExpertFunction(torch.autograd.Function):
+         grad_gate_weight = grad_scattered_gate_weight[scatter_index.flatten()]
+         grad_gate_weight = grad_gate_weight.reshape(gate_weights.shape)
+ 
+-        # recompute during backward
+-        fc1_1_activation = torch.ops.aten.silu(fc1_1_output)
+-
+         # MOE Step 7
+         grad_fc1_1_activation = grad_fc1_activation * fc1_2_output
+         grad_fc1_2_output = fc1_1_activation * grad_fc1_activation
+diff --git a/veomni/trainer/base.py b/veomni/trainer/base.py
+index 35b435bd..9a878160 100644
+--- a/veomni/trainer/base.py
++++ b/veomni/trainer/base.py
+@@ -95,6 +95,17 @@ from .callbacks import (
+ logger = logging.get_logger(__name__)
+ 
+ 
++def freeze_moe_router_parameters(model: torch.nn.Module) -> list[str]:
++    names = []
++    for name, parameter in model.named_parameters():
++        if name.endswith(".mlp.gate.weight"):
++            parameter.requires_grad_(False)
++            names.append(name)
++    if not names:
++        raise ValueError("freeze_moe_router=True but no '*.mlp.gate.weight' parameters were found")
++    return names
++
++
+ def _has_trainable_lora_parameters(module: torch.nn.Module | None) -> bool:
+     if module is None:
+         return False
+@@ -465,6 +476,9 @@ class BaseTrainer(Stateful, ABC):
+ 
+     def _freeze_model_module(self):
+         self._setup_lora()
++        if self.args.train.freeze_moe_router:
++            names = freeze_moe_router_parameters(self.model)
++            logger.info_rank0(f"Frozen {len(names)} MoE router parameter(s).")
+         pretty_print_trainable_parameters(self.model)
+         helper.print_device_mem_info("VRAM usage after building model")
+ 
+@@ -502,6 +516,7 @@ class BaseTrainer(Stateful, ABC):
+         self.collate_fn = MainCollator(
+             pad_to_length=pad_to_length,
+             seq_classification=seq_classification,
++            pack_sequences=getattr(self.model_config, "training_objective", None) != "fast_dllm_v2",
+         )
+ 
+     def _build_dataloader(self):
+@@ -754,7 +769,10 @@ class BaseTrainer(Stateful, ABC):
+         aux_metrics: Dict[str, torch.Tensor] = {}
+         # ``getattr`` rather than attribute access: most model outputs in the repo
+         # have no such field.
+-        reported = getattr(outputs, "aux_metrics", None)
++        reported = dict(getattr(outputs, "aux_metrics", None) or {})
++        router_aux_loss = getattr(outputs, "aux_loss", None)
++        if router_aux_loss is not None:
++            reported.setdefault("router_aux_loss", router_aux_loss)
+         if reported:
+             # Separate dicts keep a metric out of the objective, but not out of the
+             # ``training/`` namespace that ``EnvironMeterCallback`` publishes both
+diff --git a/veomni/trainer/callbacks/checkpoint_callback.py b/veomni/trainer/callbacks/checkpoint_callback.py
+index 83916cc9..e0012eec 100644
+--- a/veomni/trainer/callbacks/checkpoint_callback.py
++++ b/veomni/trainer/callbacks/checkpoint_callback.py
+@@ -13,6 +13,7 @@
+ # limitations under the License.
+ 
+ import os
++import shutil
+ from typing import TYPE_CHECKING
+ 
+ import torch
+@@ -38,6 +39,7 @@ class CheckpointerCallback(Callback):
+         args: "VeOmniArguments" = self.trainer.args
+         self.every_n_steps = args.train.checkpoint.save_steps
+         self.every_n_epochs = args.train.checkpoint.save_epochs
++        self.keep_last_n = args.train.checkpoint.keep_last_n
+         self._last_saved_step: int = -1
+         self.trainer.checkpointer: CheckpointerBase = build_checkpointer(
+             dist_backend=args.train.accelerator.fsdp_config.fsdp_mode, ckpt_manager=args.train.checkpoint.manager
+@@ -164,6 +166,22 @@ class CheckpointerCallback(Callback):
+         helper.empty_cache()
+         dist.barrier()
+ 
++        if self.keep_last_n:
++            self.trainer.checkpointer.wait_for_pending_save()
++            if dist.get_rank() == 0:
++                checkpoint_root = args.train.checkpoint.save_path
++                checkpoints = sorted(
++                    (
++                        (int(name.removeprefix("global_step_")), os.path.join(checkpoint_root, name))
++                        for name in os.listdir(checkpoint_root)
++                        if name.startswith("global_step_") and name.removeprefix("global_step_").isdigit()
++                    ),
++                    reverse=True,
++                )
++                for _, stale_path in checkpoints[self.keep_last_n :]:
++                    shutil.rmtree(stale_path)
++            dist.barrier()
++
+         self._last_saved_step = state.global_step
+         logger.info_rank0(f"Distributed checkpoint saved at {save_checkpoint_path} successfully!")
+ 
+diff --git a/veomni/trainer/callbacks/trace_callback.py b/veomni/trainer/callbacks/trace_callback.py
+index cdc3fcf5..42d265bb 100644
+--- a/veomni/trainer/callbacks/trace_callback.py
++++ b/veomni/trainer/callbacks/trace_callback.py
+@@ -15,6 +15,8 @@
+ import time
+ from typing import TYPE_CHECKING, Any, Dict, List
+ 
++import torch
++import torch.distributed as dist
+ from tqdm import trange
+ 
+ from ...utils import helper
+@@ -30,6 +32,25 @@ if TYPE_CHECKING:
+     from ..base import BaseTrainer, VeOmniArguments
+ 
+ 
++@torch.no_grad()
++def matrix_weight_norms(model: torch.nn.Module, process_group=None) -> dict[str, float]:
++    entries = []
++    for name, parameter in model.named_parameters():
++        if parameter.ndim < 2:
++            continue
++        local = parameter.to_local() if hasattr(parameter, "to_local") else parameter
++        is_sharded = any(p.is_shard() or p.is_partial() for p in getattr(parameter, "placements", ()))
++        entries.append((name, local.float().square().sum(), is_sharded))
++
++    sharded = [value for _, value, is_sharded in entries if is_sharded]
++    if sharded:
++        totals = torch.stack(sharded)
++        dist.all_reduce(totals, group=process_group)
++        totals = iter(totals)
++        entries = [(name, next(totals) if is_sharded else value, is_sharded) for name, value, is_sharded in entries]
++    return {f"weights/frobenius/{name.replace('.', '/')}": value.sqrt().item() for name, value, _ in entries}
++
++
+ class MoERouterMonitorCallback(Callback):
+     """Monitors MoE expert load distribution and logs heatmaps to wandb.
+ 
+@@ -120,7 +141,8 @@ class MoERouterMonitorCallback(Callback):
+             f"(steps {start}-{end}), "
+             f"max_vio max={metrics['moe/max_vio/max']:.4f} avg={metrics['moe/max_vio/avg']:.4f}, "
+             f"min_vio max={metrics['moe/min_vio/max']:.4f} avg={metrics['moe/min_vio/avg']:.4f}, "
+-            f"avg_vio max={metrics['moe/avg_vio/max']:.4f} avg={metrics['moe/avg_vio/avg']:.4f}."
++            f"avg_vio max={metrics['moe/avg_vio/max']:.4f} avg={metrics['moe/avg_vio/avg']:.4f}, "
++            f"router entropy avg={metrics['moe/router_entropy/avg']:.4f}."
+         )
+ 
+     def on_train_end(self, state: TrainerState, **kwargs) -> None:
+@@ -133,6 +155,16 @@ class MoERouterMonitorCallback(Callback):
+ 
+ 
+ class WandbTraceCallback(Callback):
++    def _log_weight_norms(self, step: int) -> None:
++        args: "VeOmniArguments" = self.trainer.args
++        if not args.train.wandb.enable or not args.train.weight_norm_interval:
++            return
++        metrics = matrix_weight_norms(self.trainer.model, self.parallel_state.fsdp_group)
++        if args.train.global_rank == 0:
++            import wandb
++
++            wandb.log(metrics, step=step)
++
+     def on_train_begin(self, state: TrainerState, **kwargs) -> None:
+         args: "VeOmniArguments" = self.trainer.args
+         if args.train.global_rank == 0 and args.train.wandb.enable:
+@@ -147,10 +179,14 @@ class WandbTraceCallback(Callback):
+                 resume="allow" if args.train.wandb.id else None,
+                 config={**asdict(args.model), **asdict(args.data), **asdict(args.train)},
+             )
++        self._log_weight_norms(state.global_step)
+ 
+     def on_step_end(self, state: TrainerState, **kwargs) -> None:
+         args: "VeOmniArguments" = self.trainer.args
+ 
++        if args.train.weight_norm_interval and state.global_step % args.train.weight_norm_interval == 0:
++            self._log_weight_norms(state.global_step)
++
+         if args.train.global_rank == 0 and args.train.wandb.enable:
+             import wandb
+ 
+diff --git a/veomni/utils/count_flops.py b/veomni/utils/count_flops.py
+index 3fdd9d52..da2e36d8 100644
+--- a/veomni/utils/count_flops.py
++++ b/veomni/utils/count_flops.py
+@@ -92,6 +92,7 @@ class VeomniFlopsCounter:
+             "deepseek_v3": self._estimate_deepseek_v3_flops,
+             "deepseek_v4": self._estimate_deepseek_v4_flops,
+             "qwen3_moe": self._estimate_qwen3_moe_flops,
++            "maple": self._estimate_qwen3_moe_flops,
+             "llama": self._estimate_llama_flops,
+             "qwen2": self._estimate_qwen2_flops,
+             # qwen3_next
+diff --git a/veomni/utils/moe_monitor.py b/veomni/utils/moe_monitor.py
+index 5e764c48..b9fddbcb 100644
+--- a/veomni/utils/moe_monitor.py
++++ b/veomni/utils/moe_monitor.py
+@@ -409,6 +409,7 @@ class MoERouterMonitor:
+ 
+         vio = self.compute_vio(load_matrix)
+         max_vio, min_vio, avg_vio = vio["max_vio"], vio["min_vio"], vio["avg_vio"]
++        router_entropy = torch.special.entr(load_matrix).sum(dim=1)
+ 
+         metrics: Dict[str, Any] = {}
+         metrics[f"{prefix}/expert_load_heatmap"] = self.build_heatmap_image(load_matrix)
+@@ -416,12 +417,14 @@ class MoERouterMonitor:
+             metrics[f"{prefix}/max_vio/layer_{i}"] = max_vio[i].item()
+             metrics[f"{prefix}/min_vio/layer_{i}"] = min_vio[i].item()
+             metrics[f"{prefix}/avg_vio/layer_{i}"] = avg_vio[i].item()
++            metrics[f"{prefix}/router_entropy/layer_{i}"] = router_entropy[i].item()
+         metrics[f"{prefix}/max_vio/max"] = max_vio.max().item()
+         metrics[f"{prefix}/max_vio/avg"] = max_vio.mean().item()
+         metrics[f"{prefix}/min_vio/max"] = min_vio.max().item()
+         metrics[f"{prefix}/min_vio/avg"] = min_vio.mean().item()
+         metrics[f"{prefix}/avg_vio/max"] = avg_vio.max().item()
+         metrics[f"{prefix}/avg_vio/avg"] = avg_vio.mean().item()
++        metrics[f"{prefix}/router_entropy/avg"] = router_entropy.mean().item()
+         return metrics
+ 
+     def build_heatmap_image(self, load_matrix: torch.Tensor, caption: Optional[str] = None):

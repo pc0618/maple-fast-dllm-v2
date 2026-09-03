@@ -1,0 +1,61 @@
+{
+  "step": 477,
+  "training": {
+    "finite": true,
+    "loss_early_median": 10.672579765319824,
+    "loss_late_median": 3.2024550437927246,
+    "mfu_steps_10_20_median": 0.06401600466459176,
+    "mfu_all_median": 0.06444217076316039,
+    "tokens_per_second_median_millions": 0.06454466525937891,
+    "router_entropy_median": 4.812154769897461,
+    "router_max_vio_median": 15.693750381469727,
+    "passed": true
+  },
+  "evaluation": {
+    "base": {
+      "hellaswag": 0.46,
+      "arc_easy": 0.63,
+      "piqa": 0.76
+    },
+    "trained": {
+      "hellaswag": 0.47,
+      "arc_easy": 0.56,
+      "piqa": 0.76
+    },
+    "aggregate_ratio": 0.9675675675675676,
+    "absolute_drops": {
+      "arc_easy": 0.06999999999999995,
+      "hellaswag": -0.009999999999999953,
+      "piqa": 0.0
+    },
+    "passed": false
+  },
+  "bdlm": {
+    "mechanically_passed": true,
+    "passed": true,
+    "completion_success_rate": 1.0,
+    "nonempty_text_rate": 1.0,
+    "semantic_checks": {
+      "math_7x8": true,
+      "sky_scattering": true
+    },
+    "semantic_pass_rate": 1.0,
+    "mean_seconds": 5.05352177450186,
+    "samples": [
+      {
+        "prompt": "What is 7 multiplied by 8? Answer briefly.",
+        "text": "The user is asking for a simple arithmetic calculation. I'll provide the answer directly without any extra commentary.\n</think>\n\n7 times 8 is 56.",
+        "generated_tokens": 32,
+        "mask_tokens_remaining": 0,
+        "seconds": 6.7973092530010035
+      },
+      {
+        "prompt": "Write one sentence explaining why the sky appears blue.",
+        "text": "The sky appears blue because of Rayleigh scattering scattering shorter wavelengths of like blue light more than longer wavelengths like red light, making the sky appear blue.\n\n\n",
+        "generated_tokens": 32,
+        "mask_tokens_remaining": 0,
+        "seconds": 3.3097342960027163
+      }
+    ]
+  }
+}

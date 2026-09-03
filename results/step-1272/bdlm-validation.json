@@ -1,0 +1,16 @@
+[
+  {
+    "prompt": "What is 7 multiplied by 8? Answer briefly.",
+    "text": "The user is asking for simple arithmetic:77 multiplied 8 = 596\n\n</think>\n\n77 x 8 = 596",
+    "generated_tokens": 32,
+    "mask_tokens_remaining": 0,
+    "seconds": 6.166171556003974
+  },
+  {
+    "prompt": "Write one sentence explaining why the sky appears blue.",
+    "text": "The sky appears blue because of Rayleigh scattering scattering of sunlight by the atmosphere, which prefer shorter wavelengths like blue blue shorter shorter shorter shorter shorter. shorter\n\n",
+    "generated_tokens": 32,
+    "mask_tokens_remaining": 0,
+    "seconds": 3.1662156199963647
+  }
+]
