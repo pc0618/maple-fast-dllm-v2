@@ -70,6 +70,22 @@ residual mask tokens and passed their simple semantic checks. The strict
 lm-eval gate remains false because ARC-Easy dropped by 0.07, beyond its 0.05
 per-task limit. Evaluation metrics: [Weights & Biases](https://wandb.ai/pranshu-01-c-stanford-university/maple-bdlm/runs/maple-bdlm-switch-aux-250m-evals-20260903).
 
+Full 5-shot MMLU over all 57 subjects and 14,042 samples shows essentially
+unchanged retained causal/AR capability:
+
+| MMLU group | Base AR | BDLM, 250M | Change |
+|---|---:|---:|---:|
+| Aggregate | 22.853% | 22.874% | +0.021 pp |
+| Humanities | 24.187% | 24.145% | -0.043 pp |
+| Social sciences | 21.677% | 21.709% | +0.032 pp |
+| STEM | 21.250% | 21.345% | +0.095 pp |
+| Other | 23.624% | 23.656% | +0.032 pp |
+
+The aggregate standard error is approximately 0.354 percentage points for
+both models, so the difference is not statistically meaningful. Runs:
+[base](https://wandb.ai/pranshu-01-c-stanford-university/maple-bdlm/runs/bujn9ozj),
+[step 477](https://wandb.ai/pranshu-01-c-stanford-university/maple-bdlm/runs/ibnwdkqp).
+
 An earlier checkpoint at step 1,272 (approximately 667M source tokens) predates
 the normalized Switch-loss experiment:
 
@@ -118,8 +134,7 @@ and W&B identifiers; change those constants before running elsewhere.
 
 - Checkpoints, datasets, caches, W&B credentials, and machine traces are not
   included.
-- The checked-in lm-eval uses `--limit 100`; run full benchmark splits before
-  drawing model-quality conclusions.
+- HellaSwag, ARC-Easy, and PIQA use `--limit 100`; full MMLU is reported above.
 - The current decoder is correctness-first and does not yet implement the
   inference optimizations needed to demonstrate Fast-dLLM v2 latency claims.
 - This work is unaffiliated with the upstream VeOmni, Fast-dLLM, and Maple
