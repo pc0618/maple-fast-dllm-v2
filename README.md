@@ -115,6 +115,13 @@ OSL 1,024, batch 32 it reaches **412.88 tok/s**, 27.8x the uncached BDLM rate an
 95.5% of the prior AR control, while allocating 79.1 GiB at peak. A matched
 8,192/32 AR SDPA smoke point reaches 435.05 tok/s.
 
+| ISL | OSL | Learned BDLM prefill tok/s | Learned BDLM decode tok/s | TPF |
+|---:|---:|---:|---:|---:|
+| 8,192 | 1,024 | 97,021 | 412.88 | 1.0 |
+| 4,096 | 2,048 | 118,257 | 361.91 | 1.0 |
+| 2,048 | 4,096 | 127,549 | 384.38 | 1.0 |
+| 1,024 | 8,192 | 126,158 | 413.44 | 1.0 |
+
 Both deterministic random tokens and a natural 128-token sample measured exactly
 1.0 accepted token per denoiser forward. The 250M-token checkpoint therefore has
 not yet learned Fast-dLLM v2's expected parallel-token gain. Forcing exactly TPF
@@ -146,6 +153,17 @@ completed both smoke prompts without residual mask tokens; one of two simple
 semantic checks passed. These samples are diagnostic only. The target is parity
 after 1B source tokens, and 100 examples per benchmark are too few for a final
 quality claim.
+
+## Future experiment: four-step blocks
+
+Retrain a block-size-32 checkpoint for a train-inference-aligned four-pass
+denoising schedule, targeting one eight-token subblock per pass. This would give
+nominal TPF 8 and effective TPF 6.4 after the one block-cache commit. The
+training corruption states must match this aggressive reveal schedule; simply
+forcing eight tokens at inference is not valid, as the forced-TPF-2 control
+already degraded quality. Compare against the current learned 32-step baseline
+using the existing quality gate: at least 95% aggregate retention, no task drop
+over 0.05, and successful mechanical and semantic BDLM checks.
 
 ## Repository layout
 
