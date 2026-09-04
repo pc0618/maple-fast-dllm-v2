@@ -14,12 +14,27 @@ from veomni.models.auto import build_foundation_model
 
 
 @torch.no_grad()
-def decode(model, input_ids, *, mask_id, eos_id, max_new_tokens, block_size, subblock_size, threshold):
+def decode(
+    model,
+    input_ids,
+    *,
+    mask_id,
+    eos_id,
+    max_new_tokens,
+    block_size,
+    subblock_size,
+    threshold,
+):
     prompt_length = input_ids.shape[1]
     target_length = prompt_length + max_new_tokens
     while input_ids.shape[1] < target_length:
-        fill = min(block_size - input_ids.shape[1] % block_size, target_length - input_ids.shape[1])
-        input_ids = torch.cat((input_ids, torch.full((1, fill), mask_id, device=input_ids.device)), dim=1)
+        fill = min(
+            block_size - input_ids.shape[1] % block_size,
+            target_length - input_ids.shape[1],
+        )
+        input_ids = torch.cat(
+            (input_ids, input_ids.new_full((input_ids.shape[0], fill), mask_id)), dim=1
+        )
         block_start = input_ids.shape[1] - input_ids.shape[1] % block_size
         if block_start == input_ids.shape[1]:
             block_start -= block_size
@@ -27,20 +42,27 @@ def decode(model, input_ids, *, mask_id, eos_id, max_new_tokens, block_size, sub
         for subblock_start in range(block_start, input_ids.shape[1], subblock_size):
             subblock_end = min(subblock_start + subblock_size, input_ids.shape[1])
             while input_ids[:, subblock_start:subblock_end].eq(mask_id).any():
-                positions = torch.arange(input_ids.shape[1], device=input_ids.device).unsqueeze(0)
+                positions = torch.arange(
+                    input_ids.shape[1], device=input_ids.device
+                ).expand_as(input_ids)
+                logit_positions = torch.arange(
+                    subblock_start - 1, subblock_end - 1, device=input_ids.device
+                )
                 output = model(
                     input_ids=input_ids,
                     attention_mask=torch.ones_like(input_ids),
                     position_ids=positions,
                     use_cache=False,
                     bdlm_decode=True,
+                    logits_to_keep=logit_positions,
                 )
-                shifted_logits = torch.cat((output.logits[:, :1], output.logits[:, :-1]), dim=1)
-                probabilities, candidates = shifted_logits[:, subblock_start:subblock_end].softmax(-1).max(-1)
+                probabilities, candidates = output.logits.softmax(-1).max(-1)
                 masked = input_ids[:, subblock_start:subblock_end].eq(mask_id)
                 confidence = probabilities.masked_fill(~masked, -torch.inf)
                 reveal = (confidence > threshold) & masked
-                reveal[:, confidence.argmax(-1)] = True
+                unfinished = masked.any(-1)
+                rows = torch.where(unfinished)[0]
+                reveal[rows, confidence[rows].argmax(-1)] = True
                 span = input_ids[:, subblock_start:subblock_end]
                 span[reveal] = candidates[reveal]
 
@@ -93,7 +115,9 @@ def main():
     results = []
     for prompt_text in args.prompt:
         messages = [{"role": "user", "content": prompt_text}]
-        prompt = tokenizer.apply_chat_template(messages, add_generation_prompt=True, return_tensors="pt")
+        prompt = tokenizer.apply_chat_template(
+            messages, add_generation_prompt=True, return_tensors="pt"
+        )
         if not isinstance(prompt, torch.Tensor):
             prompt = prompt.input_ids
         prompt = prompt.cuda()

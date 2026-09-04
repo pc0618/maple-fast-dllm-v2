@@ -94,6 +94,28 @@ experiment artifacts rather than being duplicated in Git.
 Earlier 5-shot bare-label likelihood results around 22.9% used an incompatible
 prompt/scoring path and are superseded by this evaluator.
 
+## Decode throughput benchmark
+
+An eight-H200 throughput sweep is running for the base AR model and the
+`maple-fast-dllm-v2-switch-aux-250m-mbs32-20260903` step-477 export. Batch size
+32 is the largest validated batch at the 9,216-token footprint; progressive
+BDLM decoding reached approximately 140--142.6 GiB of 143.8 GiB HBM. Rates are
+aggregate tokens per second for one H200, using deterministic synthetic token
+inputs and three timed prefill repetitions.
+
+| ISL | OSL | AR prefill tok/s | AR decode tok/s | BDLM prefill | BDLM decode |
+|---:|---:|---:|---:|---:|---:|
+| 8,192 | 1,024 | 138,753 | 432.24 | Running | Running |
+| 4,096 | 2,048 | 136,144 | 331.11 | Running | Running |
+| 2,048 | 4,096 | 134,147 | 417.93 | Running | Running |
+| 1,024 | 8,192 | 122,178 | 420.70 | Running | Running |
+
+AR decode uses a KV cache. BDLM decode uses block size 32, subblock size 8,
+confidence threshold 0.9, and repeated full-context block-causal passes without
+a KV cache. The exact BDLM runs are intentionally not extrapolated; this table
+will be updated when their output JSON files complete. Raw completed values and
+the pending-run metadata are in `results/decode-throughput-bs32/`.
+
 An earlier checkpoint at step 1,272 (approximately 667M source tokens) predates
 the normalized Switch-loss experiment:
 
@@ -118,7 +140,8 @@ quality claim.
 - `overlay/veomni/models/transformers/maple/`: Maple registration, attention,
   ternary-QAT, MoE, and patchgen implementation.
 - `overlay/scripts/maple/`: dataset preparation, profiling, supervision,
-  checkpoint export, MMLU evaluation, quality gate, and BDLM decoding.
+  checkpoint export, MMLU evaluation, quality gate, BDLM decoding, and decode
+  throughput measurement.
 - `results/`: raw preliminary evaluation JSON; no model weights or datasets.
 
 ## Reproduce

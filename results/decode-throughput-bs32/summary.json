@@ -1,0 +1,50 @@
+{
+  "status": "bdlm_running",
+  "hardware": "1x NVIDIA H200 per measurement",
+  "batch_size": 32,
+  "input": "deterministic synthetic token IDs, seed 1234",
+  "base_checkpoint": "deepgrove/maple-preview local export",
+  "bdlm_checkpoint": "maple-fast-dllm-v2-switch-aux-250m-mbs32-20260903/global_step_477",
+  "bdlm_protocol": {
+    "block_size": 32,
+    "subblock_size": 8,
+    "confidence_threshold": 0.9,
+    "kv_cache": false
+  },
+  "ar_results": [
+    {
+      "isl": 8192,
+      "osl": 1024,
+      "prefill_seconds_median": 1.889280935007264,
+      "prefill_tokens_per_second": 138753.31886466747,
+      "decode_seconds": 75.80998993800313,
+      "decode_tokens_per_second": 432.2385483337676
+    },
+    {
+      "isl": 4096,
+      "osl": 2048,
+      "prefill_seconds_median": 0.9627429789979942,
+      "prefill_tokens_per_second": 136144.33224578528,
+      "decode_seconds": 197.9285982989968,
+      "decode_tokens_per_second": 331.10930185540633
+    },
+    {
+      "isl": 2048,
+      "osl": 4096,
+      "prefill_seconds_median": 0.48853824099933263,
+      "prefill_tokens_per_second": 134147.1240121191,
+      "decode_seconds": 313.6243677300081,
+      "decode_tokens_per_second": 417.92670942213533
+    },
+    {
+      "isl": 1024,
+      "osl": 8192,
+      "prefill_seconds_median": 0.268199720987468,
+      "prefill_tokens_per_second": 122177.60659613485,
+      "decode_seconds": 623.1169565349992,
+      "decode_tokens_per_second": 420.69790791397907
+    }
+  ],
+  "bdlm_results": [],
+  "remote_output_directory": "/mnt/data/VeOmni-maple/evals/decode-throughput/powers-of-two-bs32"
+}
