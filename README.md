@@ -76,16 +76,20 @@ BDLM checkpoint it appends one mask token and reads the shifted choice logits
 from one block-causal denoising forward pass. It does not generate a reasoning
 trace or run a multi-step sampler.
 
-| 32-example protocol gate | Base AR | BDLM, 250M |
-|---|---:|---:|
-| Accuracy | 56.25% | 34.38% |
-| Evaluation time | 28.83 s | 9.59 s |
+| Full zero-shot MMLU | Base AR | BDLM, 250M | Change |
+|---|---:|---:|---:|
+| Accuracy | 62.064% | 48.853% | -13.210 pp |
+| 95% confidence interval | 61.261–62.866% | 48.027–49.680% | — |
+| Macro average over 57 subjects | 63.936% | 50.648% | -13.288 pp |
+| Correct / 14,042 | 8,715 | 6,860 | -1,855 |
 
-The base gate is consistent with the approximately 57% MMLU score reported by
-the Maple developers, but 32 examples are too few for a checkpoint comparison.
-The full 14,042-example paired run was submitted on eight H200 GPUs; its final
-results will replace this gate when complete. Raw gate outputs are under
-`results/mmlu-zero-shot-one-token/`.
+The BDLM checkpoint retains `78.71%` of base accuracy, so it is not near parity
+after 250M source tokens. Paired scoring found 5,649 questions both models got
+right, 3,066 base-only wins, 1,211 BDLM-only wins, and 4,116 both wrong. The
+eight-H200 run took 3m47s for the base phase and 4m14s for BDLM, including model
+loading. The compact full summary and raw 32-example protocol gate are under
+`results/mmlu-zero-shot-one-token/`; full per-example shards remain with the
+experiment artifacts rather than being duplicated in Git.
 
 Earlier 5-shot bare-label likelihood results around 22.9% used an incompatible
 prompt/scoring path and are superseded by this evaluator.
@@ -152,8 +156,8 @@ python scripts/maple/eval_mmlu_bdlm.py \
 
 - Checkpoints, datasets, caches, W&B credentials, and machine traces are not
   included.
-- HellaSwag, ARC-Easy, and PIQA use `--limit 100`; the checked-in MMLU result is
-  a 32-example protocol gate pending the full run.
+- HellaSwag, ARC-Easy, and PIQA use `--limit 100`; MMLU uses all 14,042 test
+  examples.
 - The current decoder is correctness-first and does not yet implement the
   inference optimizations needed to demonstrate Fast-dLLM v2 latency claims.
 - This work is unaffiliated with the upstream VeOmni, Fast-dLLM, and Maple

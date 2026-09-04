@@ -1,0 +1,45 @@
+{
+  "protocol": {
+    "dataset": "cais/mmlu",
+    "config": "all",
+    "split": "test",
+    "examples": 14042,
+    "num_fewshot": 0,
+    "seed": 1234,
+    "chat_template": "Maple native",
+    "scoring": "one-token argmax restricted to A/B/C/D",
+    "bdlm": "one mask token, one block-causal forward pass, shifted mask logits",
+    "block_size": 32
+  },
+  "base_ar": {
+    "correct": 8715,
+    "accuracy": 0.6206380857427717,
+    "standard_error": 0.004094789595079032,
+    "confidence_interval_95": [
+      0.6126122981364168,
+      0.6286638733491265
+    ],
+    "macro_subject_accuracy": 0.6393614767219745,
+    "phase_wall_seconds": 227
+  },
+  "bdlm_step_477_250m": {
+    "correct": 6860,
+    "accuracy": 0.4885343968095713,
+    "standard_error": 0.0042183373198304175,
+    "confidence_interval_95": [
+      0.4802664556627037,
+      0.4968023379564389
+    ],
+    "macro_subject_accuracy": 0.5064815021857767,
+    "phase_wall_seconds": 254
+  },
+  "comparison": {
+    "absolute_change": -0.1321036889332004,
+    "retention": 0.7871485943775101,
+    "prediction_agreement": 0.5781939894601908,
+    "both_correct": 5649,
+    "base_only_correct": 3066,
+    "bdlm_only_correct": 1211,
+    "both_wrong": 4116
+  }
+}
