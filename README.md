@@ -96,25 +96,33 @@ prompt/scoring path and are superseded by this evaluator.
 
 ## Decode throughput benchmark
 
-An eight-H200 throughput sweep is running for the base AR model and the
-`maple-fast-dllm-v2-switch-aux-250m-mbs32-20260903` step-477 export. Batch size
-32 is the largest validated batch at the 9,216-token footprint; progressive
-BDLM decoding reached approximately 140--142.6 GiB of 143.8 GiB HBM. Rates are
-aggregate tokens per second for one H200, using deterministic synthetic token
-inputs and three timed prefill repetitions.
+The uncached sweep used the `maple-fast-dllm-v2-switch-aux-250m-mbs32-20260903`
+step-477 export at batch 32, the largest validated batch at the 9,216-token
+footprint. Rates are aggregate tokens per second on one H200 using deterministic
+synthetic tokens and three timed prefill repetitions.
 
 | ISL | OSL | AR prefill tok/s | AR decode tok/s | BDLM prefill | BDLM decode |
 |---:|---:|---:|---:|---:|---:|
-| 8,192 | 1,024 | 138,753 | 432.24 | Running | Running |
-| 4,096 | 2,048 | 136,144 | 331.11 | Running | Running |
-| 2,048 | 4,096 | 134,147 | 417.93 | Running | Running |
-| 1,024 | 8,192 | 122,178 | 420.70 | Running | Running |
+| 8,192 | 1,024 | 138,753 | 432.24 | 131,475 | 14.86 |
+| 4,096 | 2,048 | 136,144 | 331.11 | 134,725 | 25.94 |
+| 2,048 | 4,096 | 134,147 | 417.93 | 129,186 | 32.25 |
+| 1,024 | 8,192 | 122,178 | 420.70 | 117,818 | 25.63 |
 
-AR decode uses a KV cache. BDLM decode uses block size 32, subblock size 8,
-confidence threshold 0.9, and repeated full-context block-causal passes without
-a KV cache. The exact BDLM runs are intentionally not extrapolated; this table
-will be updated when their output JSON files complete. Raw completed values and
-the pending-run metadata are in `results/decode-throughput-bs32/`.
+The optimized decoder now caches the immutable clean prefix, recomputes only the
+32-token active block, reuses contiguous prefix/block K/V buffers within that
+block, and materializes all 144 QAT ternary parametrizations once. At ISL 8,192,
+OSL 1,024, batch 32 it reaches **412.88 tok/s**, 27.8x the uncached BDLM rate and
+95.5% of the prior AR control, while allocating 79.1 GiB at peak. A matched
+8,192/32 AR SDPA smoke point reaches 435.05 tok/s.
+
+Both deterministic random tokens and a natural 128-token sample measured exactly
+1.0 accepted token per denoiser forward. The 250M-token checkpoint therefore has
+not yet learned Fast-dLLM v2's expected parallel-token gain; a projected result
+at TPF near 2 is not reported as measured throughput. The cache boundary follows
+the local Block Diffusion Language Model Hybrids paper/code: only the completed
+prefix is invariant. Subblock-state caching, active-set shrinking, and latent
+reuse remain disabled because they are approximate for this checkpoint's dense
+within-block attention. Raw optimized results are in `results/decode-prefix-cache/`.
 
 An earlier checkpoint at step 1,272 (approximately 667M source tokens) predates
 the normalized Switch-loss experiment:
@@ -181,8 +189,8 @@ python scripts/maple/eval_mmlu_bdlm.py \
   included.
 - HellaSwag, ARC-Easy, and PIQA use `--limit 100`; MMLU uses all 14,042 test
   examples.
-- The current decoder is correctness-first and does not yet implement the
-  inference optimizations needed to demonstrate Fast-dLLM v2 latency claims.
+- Cached and uncached BF16 execution are mathematically equivalent but not
+  bitwise identical because fused MoE GEMM reduction shapes differ.
 - This work is unaffiliated with the upstream VeOmni, Fast-dLLM, and Maple
   authors.
 

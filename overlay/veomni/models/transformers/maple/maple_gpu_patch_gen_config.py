@@ -34,7 +34,13 @@ config = PatchConfig(
 )
 config.add_import(
     "veomni.models.transformers.maple.modeling_utils",
-    names=["create_block_causal_mask", "create_fast_dllm_mask", "prepare_fast_dllm_batch", "ternarize_parameter"],
+    names=[
+        "create_block_causal_mask",
+        "create_cached_block_mask",
+        "create_fast_dllm_mask",
+        "prepare_fast_dllm_batch",
+        "ternarize_parameter",
+    ],
 )
 config.add_import(
     "veomni.models.transformers.masking_utils",
@@ -252,11 +258,11 @@ def maple_model_forward(
     bdlm_source_length (`int`, *optional*):
         Unexpanded sequence length when the input contains Fast-dLLM ``[x_t, x_0]`` pairs.
     bdlm_decode (`bool`, *optional*):
-        Use block-causal Fast-dLLM inference attention without KV caching.
+        Use block-causal Fast-dLLM inference attention, optionally over a completed-prefix KV cache.
     """
     if (input_ids is None) ^ (inputs_embeds is not None):
         raise ValueError("You must specify exactly one of input_ids or inputs_embeds")
-    if (bdlm_source_length is not None or bdlm_decode) and (past_key_values is not None or use_cache):
+    if bdlm_source_length is not None and (past_key_values is not None or use_cache):
         raise ValueError("Fast-dLLM training does not support KV caching.")
     if use_cache and past_key_values is None:
         past_key_values = DynamicCache(config=self.config)
@@ -271,17 +277,40 @@ def maple_model_forward(
         position_ids = cache_position.unsqueeze(0)
 
     if bdlm_decode:
-        global_mask = create_block_causal_mask(
-            position_ids,
-            attention_mask,
-            block_size=self.config.bdlm_block_size,
-        )
-        sliding_mask = create_block_causal_mask(
-            position_ids,
-            attention_mask,
-            block_size=self.config.bdlm_block_size,
-            sliding_window=self.config.sliding_window,
-        )
+        if past_key_values is None:
+            global_mask = create_block_causal_mask(
+                position_ids,
+                attention_mask,
+                block_size=self.config.bdlm_block_size,
+            )
+            sliding_mask = create_block_causal_mask(
+                position_ids,
+                attention_mask,
+                block_size=self.config.bdlm_block_size,
+                sliding_window=self.config.sliding_window,
+            )
+        else:
+            global_layer = next(
+                (index for index, layer_type in enumerate(self.config.layer_types) if layer_type == "full_attention"),
+                0,
+            )
+            sliding_layer = next(
+                (index for index, layer_type in enumerate(self.config.layer_types) if layer_type == "sliding_attention"),
+                0,
+            )
+            global_mask = create_cached_block_mask(
+                position_ids,
+                attention_mask,
+                past_key_values=past_key_values,
+                layer_idx=global_layer,
+            )
+            sliding_mask = create_cached_block_mask(
+                position_ids,
+                attention_mask,
+                past_key_values=past_key_values,
+                layer_idx=sliding_layer,
+                sliding_window=self.config.sliding_window,
+            )
     elif bdlm_source_length is not None:
         global_mask = create_fast_dllm_mask(
             position_ids,
@@ -379,8 +408,6 @@ def maple_forcausallm_forward(
         output_router_logits if output_router_logits is not None else self.config.output_router_logits
     )
     bdlm_source_length = None
-    if bdlm_decode:
-        use_cache = False
     if self.training and self.config.training_objective == "fast_dllm_v2":
         if input_ids is None or labels is None or inputs_embeds is not None:
             raise ValueError("Fast-dLLM v2 training requires input_ids and labels, not inputs_embeds.")

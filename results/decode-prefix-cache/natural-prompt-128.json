@@ -1,0 +1,15 @@
+[
+  {
+    "prompt": "Explain why exact prefix caching accelerates block diffusion language model decoding.",
+    "text": "The user asks about \"exact prefix caching\" in the context of block diffusion language models. This is a technical question about the mechanism of,... I need to explain the concept of prefix caching in the context of block diffusion models, which are a type of transformer-based model.. The user likely wants a clear, concise explanation of how prefix caching works, why it's beneficial, and how it's implemented in practice diffusion models.\n\nI'll structure the response to first define prefix caching, then explain the mechanism, then the performance benefits, and finally mention implementation details. I'll keep the tone informative and direct, avoiding unnecessary jargon",
+    "generated_tokens": 128,
+    "mask_tokens_remaining": 0,
+    "seconds": 19.953845256008208,
+    "tokens_per_second": 6.4148036810828994,
+    "denoise_forwards": 128,
+    "cache_update_forwards": 4,
+    "accepted_tokens": 128,
+    "tokens_per_forward": 1.0,
+    "prefix_cache": true
+  }
+]

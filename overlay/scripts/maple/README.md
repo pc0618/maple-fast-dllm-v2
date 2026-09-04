@@ -86,24 +86,7 @@ Evaluate the AR control with ordinary causal generation and the BDLM with block 
 
 Then run `python scripts/maple/gate_bdlm.py metrics.json`. Decoder work passes only if BDLM reaches at least 95% of the AR aggregate and no benchmark drops more than 5 absolute points.
 
-For zero-shot MMLU, score the single next choice token instead of generating a
-reasoning trace:
-
-```bash
-python scripts/maple/eval_mmlu_bdlm.py \
-  --model artifacts/maple-preview --mode ar \
-  --output-json results/base-ar-mmlu.json
-
-python scripts/maple/eval_mmlu_bdlm.py \
-  --model exports/maple-fast-dllm-v2 --mode bdlm --block-size 32 \
-  --output-json results/bdlm-mmlu.json
-```
-
-Both paths apply Maple's chat template and restrict the decision to the four
-single-token choices. The BDLM path performs one masked, block-causal forward
-pass and reads the shifted logits for that mask.
-
-After the gate passes, the correctness-first, no-KV-cache decoder is:
+After the gate passes, run the cached decoder with:
 
 ```bash
 python scripts/maple/decode_fast_dllm_v2.py \
@@ -111,4 +94,8 @@ python scripts/maple/decode_fast_dllm_v2.py \
   --prompt "Explain why the sky is blue."
 ```
 
-It uses 32-token blocks, 8-token subblocks, a 0.9 confidence threshold, and guarantees at least one reveal per iteration. Treat results only as 2K-context BDLM evidence; run long-context autoregressive checks separately, and optimize block/KV caching only after the gate passes.
+It uses 32-token blocks, 8-token subblocks, a 0.9 confidence threshold, and guarantees at least one reveal per iteration. The clean prefix is encoded once, its global and sliding-window K/V states remain immutable during denoising, and the completed block is appended once. The read-only cache reuses one contiguous `[prefix, active block]` buffer across denoise passes. Inference also materializes the 144 trained ternary parametrizations once instead of rerunning QAT quantization on every forward.
+
+This follows the exact cache boundary in the local sibling checkouts `block-diffusion-linear-hybrids` and `neurips_2026_draft/pi_short_train_inference_mismatch_proposal.tex`: only the clean prefix is invariant. Subblock-state caching, shrinking active sets, and learned latent reuse are not enabled because this checkpoint was trained with dense attention across each 32-token noisy block; those shortcuts would change its denoiser unless trained explicitly.
+
+On one H200 at batch 32, ISL 8,192, OSL 1,024, the step-477 checkpoint improved from 14.86 tok/s uncached to 412.88 tok/s cached (27.8x) at TPF 1.0, with 79.1 GiB peak allocation. A matched AR smoke point using SDPA reached 435.05 tok/s at ISL 8,192, OSL 32. A natural 128-token sample also measured TPF 1.0, so this 250M-token checkpoint has not yet learned Fast-dLLM v2's expected multi-token acceptance; speed projections assuming TPF near 2 are not measured results.

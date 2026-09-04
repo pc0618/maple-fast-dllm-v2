@@ -12,6 +12,7 @@ import torch
 from torch import nn
 from torch.nn.attention.flex_attention import create_block_mask
 from torch.nn.utils import parametrize
+from transformers.cache_utils import Cache
 
 
 def twn_torch_ref(weight: torch.Tensor) -> torch.Tensor:
@@ -45,6 +46,50 @@ class TernaryParametrization(nn.Module):
 def ternarize_parameter(module: nn.Module, name: str = "weight") -> None:
     """Keep a latent parameter and expose its ternary STE value at ``module.<name>``."""
     parametrize.register_parametrization(module, name, TernaryParametrization(), unsafe=True)
+
+
+def materialize_ternary_parameters(module: nn.Module) -> int:
+    """Replace inference-time QAT parametrizations with their ternary values."""
+    materialized = 0
+    for child in module.modules():
+        for name in ("weight", "gate_up_proj", "down_proj"):
+            if parametrize.is_parametrized(child, name):
+                parametrize.remove_parametrizations(child, name, leave_parametrized=True)
+                materialized += 1
+    return materialized
+
+
+class ReadOnlyCache(Cache):
+    """Expose a completed-prefix cache without appending the noisy block to it."""
+
+    def __init__(self, source: Cache):
+        super().__init__(layers=source.layers)
+        self.source = source
+        self.buffers = {}
+
+    def update(
+        self, key_states: torch.Tensor, value_states: torch.Tensor, layer_idx: int, *args, **kwargs
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        del args, kwargs
+        layer = self.layers[layer_idx]
+        if not layer.is_initialized:
+            return key_states, value_states
+        if layer_idx not in self.buffers:
+            self.buffers[layer_idx] = (
+                torch.cat((layer.keys, key_states), dim=-2),
+                torch.cat((layer.values, value_states), dim=-2),
+            )
+        else:
+            keys, values = self.buffers[layer_idx]
+            keys[..., layer.keys.shape[-2] :, :].copy_(key_states)
+            values[..., layer.values.shape[-2] :, :].copy_(value_states)
+        return self.buffers[layer_idx]
+
+    def get_seq_length(self, layer_idx: int = 0) -> int:
+        return self.source.get_seq_length(layer_idx)
+
+    def get_mask_sizes(self, query_length: int, layer_idx: int) -> tuple[int, int]:
+        return self.source.get_mask_sizes(query_length, layer_idx)
 
 
 def prepare_fast_dllm_batch(
@@ -173,5 +218,43 @@ def create_block_causal_mask(
         H=None,
         Q_LEN=sequence_length,
         KV_LEN=sequence_length,
+        device=position_ids.device,
+    )
+
+
+def create_cached_block_mask(
+    position_ids: torch.Tensor,
+    attention_mask: torch.Tensor,
+    *,
+    past_key_values: Cache,
+    layer_idx: int,
+    sliding_window: int | None = None,
+):
+    """Attend from one noisy block to an immutable clean-prefix KV cache."""
+    if position_ids.shape != attention_mask.shape:
+        raise ValueError("Cached block position_ids and attention_mask must have identical shapes.")
+    query_length = position_ids.shape[1]
+    prefix_length = past_key_values.get_seq_length(layer_idx)
+    kv_length, kv_offset = past_key_values.get_mask_sizes(query_length, layer_idx)
+
+    def mask_mod(batch, head, query_index, key_index):
+        del head
+        query_position = position_ids[batch, query_index]
+        key_position = key_index + kv_offset
+        current_key = (key_position >= prefix_length) & (key_position < prefix_length + query_length)
+        visible = torch.ones_like(current_key, dtype=torch.bool)
+        if sliding_window is not None:
+            visible = current_key | ((query_position - key_position) <= sliding_window)
+        current_index = (key_position - prefix_length).clamp(min=0, max=query_length - 1)
+        key_valid = current_key & attention_mask[batch, current_index].bool()
+        key_valid = (key_position < prefix_length) | key_valid
+        return visible & attention_mask[batch, query_index].bool() & key_valid
+
+    return create_block_mask(
+        mask_mod,
+        B=position_ids.shape[0],
+        H=None,
+        Q_LEN=query_length,
+        KV_LEN=kv_length,
         device=position_ids.device,
     )

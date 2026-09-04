@@ -9,9 +9,10 @@ from pathlib import Path
 
 import torch
 
-from scripts.maple.decode_fast_dllm_v2 import decode
+from scripts.maple.decode_fast_dllm_v2 import decode, prefill_prefix
 from veomni.arguments.arguments_types import OpsImplementationConfig
 from veomni.models.auto import build_foundation_model
+from veomni.models.transformers.maple.modeling_utils import materialize_ternary_parameters
 
 
 def timed(call):
@@ -36,14 +37,16 @@ def main() -> None:
     parser.add_argument("--block-size", type=int, default=32)
     parser.add_argument("--subblock-size", type=int, default=8)
     parser.add_argument("--threshold", type=float, default=0.9)
+    parser.add_argument("--attn-implementation", choices=("flex_attention", "sdpa"))
     args = parser.parse_args()
     if min(args.isl, args.osl, args.batch_size, args.prefill_repeats) < 1:
         parser.error("ISL, OSL, batch size, and prefill repeats must be positive")
 
     torch.cuda.set_device(args.device)
     torch.manual_seed(1234)
+    attn_implementation = args.attn_implementation or ("sdpa" if args.mode == "ar" else "flex_attention")
     ops = OpsImplementationConfig(
-        attn_implementation="flex_attention",
+        attn_implementation=attn_implementation,
         moe_implementation="fused_quack",
         load_balancing_loss_implementation="eager",
     )
@@ -59,20 +62,11 @@ def main() -> None:
         },
         ops_implementation=ops,
     ).eval()
-    input_ids = torch.randint(
-        100, model.config.vocab_size - 1024, (args.batch_size, args.isl), device="cuda"
-    )
-    position_ids = torch.arange(args.isl, device="cuda").expand_as(input_ids)
+    materialized_parameters = materialize_ternary_parameters(model)
+    input_ids = torch.randint(100, model.config.vocab_size - 1024, (args.batch_size, args.isl), device="cuda")
 
     def prefill():
-        return model(
-            input_ids=input_ids,
-            attention_mask=torch.ones_like(input_ids),
-            position_ids=position_ids,
-            use_cache=args.mode == "ar",
-            bdlm_decode=args.mode == "bdlm",
-            logits_to_keep=1,
-        )
+        return prefill_prefix(model, input_ids, bdlm_decode=args.mode == "bdlm")
 
     warmup = prefill()
     del warmup
@@ -87,13 +81,12 @@ def main() -> None:
         token = warmup.logits[:, -1].argmax(-1, keepdim=True)
         cache = warmup.past_key_values
         for _ in range(8):
-            warmup = model(
-                input_ids=token, past_key_values=cache, use_cache=True, logits_to_keep=1
-            )
+            warmup = model(input_ids=token, past_key_values=cache, use_cache=True, logits_to_keep=1)
             token = warmup.logits[:, -1].argmax(-1, keepdim=True)
             cache = warmup.past_key_values
         del warmup, cache
 
+        torch.cuda.reset_peak_memory_stats()
         initial = prefill()
         token = initial.logits[:, -1].argmax(-1, keepdim=True)
         cache = initial.past_key_values
@@ -101,12 +94,7 @@ def main() -> None:
         def run_decode():
             nonlocal token, cache
             for _ in range(args.osl):
-                output = model(
-                    input_ids=token,
-                    past_key_values=cache,
-                    use_cache=True,
-                    logits_to_keep=1,
-                )
+                output = model(input_ids=token, past_key_values=cache, use_cache=True, logits_to_keep=1)
                 token = output.logits[:, -1].argmax(-1, keepdim=True)
                 cache = output.past_key_values
 
@@ -115,6 +103,7 @@ def main() -> None:
         mask_id = model.config.mask_token_id
         if mask_id is None:
             raise ValueError("The model config does not define mask_token_id")
+        warmup = prefill()
         decode(
             model,
             input_ids,
@@ -124,7 +113,14 @@ def main() -> None:
             block_size=args.block_size,
             subblock_size=args.subblock_size,
             threshold=args.threshold,
+            prefix_cache=warmup.past_key_values,
+            prefix_logits=warmup.logits[:, -1:],
         )
+        del warmup
+
+        torch.cuda.reset_peak_memory_stats()
+        initial = prefill()
+        decode_stats = {}
 
         def run_decode():
             return decode(
@@ -136,16 +132,14 @@ def main() -> None:
                 block_size=args.block_size,
                 subblock_size=args.subblock_size,
                 threshold=args.threshold,
+                prefix_cache=initial.past_key_values,
+                prefix_logits=initial.logits[:, -1:],
+                stats=decode_stats,
             )
 
         generated, decode_seconds = timed(run_decode)
-        if (
-            generated.shape[1] != args.isl + args.osl
-            or generated[:, args.isl :].eq(mask_id).any()
-        ):
-            raise RuntimeError(
-                "BDLM decode did not produce the requested number of completed tokens"
-            )
+        if generated.shape[1] != args.isl + args.osl or generated[:, args.isl :].eq(mask_id).any():
+            raise RuntimeError("BDLM decode did not produce the requested number of completed tokens")
 
     prefill_seconds = statistics.median(prefill_times)
     result = {
@@ -162,6 +156,14 @@ def main() -> None:
         "block_size": args.block_size if args.mode == "bdlm" else None,
         "subblock_size": args.subblock_size if args.mode == "bdlm" else None,
         "threshold": args.threshold if args.mode == "bdlm" else None,
+        "denoise_forwards": decode_stats.get("denoise_forwards") if args.mode == "bdlm" else None,
+        "cache_update_forwards": decode_stats.get("cache_update_forwards") if args.mode == "bdlm" else None,
+        "tokens_per_forward": decode_stats.get("tokens_per_forward") if args.mode == "bdlm" else None,
+        "prefix_cache": args.mode == "bdlm",
+        "attn_implementation": attn_implementation,
+        "materialized_ternary_parameters": materialized_parameters,
+        "peak_allocated_gib": torch.cuda.max_memory_allocated() / 1024**3,
+        "peak_reserved_gib": torch.cuda.max_memory_reserved() / 1024**3,
         "gpu": torch.cuda.get_device_name(),
     }
     args.output_json.parent.mkdir(parents=True, exist_ok=True)

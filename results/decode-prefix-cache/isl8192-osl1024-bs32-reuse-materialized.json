@@ -1,0 +1,23 @@
+{
+  "model": "/mnt/data/VeOmni-maple/evals/exports/global_step_477",
+  "mode": "bdlm",
+  "batch_size": 32,
+  "isl": 8192,
+  "osl": 1024,
+  "prefill_seconds_median": 2.7019426740007475,
+  "prefill_tokens_per_second": 97020.56321270695,
+  "decode_seconds": 79.36420229199575,
+  "decode_tokens_per_second": 412.88136280183846,
+  "prefill_repeats": 3,
+  "block_size": 32,
+  "subblock_size": 8,
+  "threshold": 0.9,
+  "denoise_forwards": 1024,
+  "cache_update_forwards": 32,
+  "tokens_per_forward": 1.0,
+  "prefix_cache": true,
+  "materialized_ternary_parameters": 144,
+  "peak_allocated_gib": 79.058997631073,
+  "peak_reserved_gib": 83.681640625,
+  "gpu": "NVIDIA H200"
+}

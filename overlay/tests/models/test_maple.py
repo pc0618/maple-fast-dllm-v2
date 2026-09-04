@@ -1,11 +1,15 @@
 import torch
 import torch.nn.functional as F
+from transformers.cache_utils import DynamicCache
 
 from veomni.models.transformers.maple.checkpoint_tensor_converter import MapleCheckpointTensorConverter
 from veomni.models.transformers.maple.configuration_maple import MapleConfig
 from veomni.models.transformers.maple.modeling_utils import (
     QuantizeTernary,
+    ReadOnlyCache,
+    create_cached_block_mask,
     create_fast_dllm_mask,
+    materialize_ternary_parameters,
     prepare_fast_dllm_batch,
     twn_torch_ref,
 )
@@ -50,6 +54,46 @@ def test_maple_ternary_and_fast_dllm_v2_contract():
     assert not allowed(torch.tensor(8), torch.tensor(0))  # no clean-to-noisy edge
     assert allowed(torch.tensor(12), torch.tensor(8))  # clean block-causal edge
 
+
+def test_maple_readonly_prefix_cache_and_mask():
+    source = DynamicCache()
+    prefix_keys = torch.randn(1, 1, 3, 4)
+    prefix_values = torch.randn_like(prefix_keys)
+    source.update(prefix_keys, prefix_values, 0)
+    readonly = ReadOnlyCache(source)
+    block_keys = torch.randn(1, 1, 2, 4)
+    keys, _ = readonly.update(block_keys, block_keys, 0)
+
+    assert source.get_seq_length() == 3
+    assert keys.shape[-2] == 5
+    replacement = torch.randn_like(block_keys)
+    replaced, _ = readonly.update(replacement, replacement, 0)
+    torch.testing.assert_close(replaced[..., -2:, :], replacement)
+    assert source.get_seq_length() == 3
+    mask = create_cached_block_mask(
+        torch.tensor([[3, 4]]),
+        torch.ones(1, 2, dtype=torch.long),
+        past_key_values=readonly,
+        layer_idx=0,
+        sliding_window=2,
+    )
+
+    def allowed(query, key):
+        return bool(mask.mask_mod(torch.tensor(0), torch.tensor(0), torch.tensor(query), torch.tensor(key)))
+
+    assert allowed(0, 1)  # absolute positions 3 and 1 are at the sliding-window boundary
+    assert not allowed(1, 1)
+    assert allowed(0, 4)  # every token in the active block is bidirectionally visible
+
+
+def test_maple_materializes_ternary_parameters_once():
+    linear = torch.nn.Linear(4, 2, bias=False)
+    torch.nn.utils.parametrize.register_parametrization(linear, "weight", torch.nn.Identity())
+    expected = linear.weight.detach().clone()
+
+    assert materialize_ternary_parameters(linear) == 1
+    assert materialize_ternary_parameters(linear) == 0
+    torch.testing.assert_close(linear.weight, expected)
 
 def test_maple_config_and_checkpoint_conversion():
     config = MapleConfig(num_hidden_layers=8)
