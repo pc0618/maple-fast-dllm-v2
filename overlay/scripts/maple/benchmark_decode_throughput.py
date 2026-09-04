@@ -37,6 +37,7 @@ def main() -> None:
     parser.add_argument("--block-size", type=int, default=32)
     parser.add_argument("--subblock-size", type=int, default=8)
     parser.add_argument("--threshold", type=float, default=0.9)
+    parser.add_argument("--reveal-per-forward", type=int)
     parser.add_argument("--attn-implementation", choices=("flex_attention", "sdpa"))
     args = parser.parse_args()
     if min(args.isl, args.osl, args.batch_size, args.prefill_repeats) < 1:
@@ -113,6 +114,7 @@ def main() -> None:
             block_size=args.block_size,
             subblock_size=args.subblock_size,
             threshold=args.threshold,
+            reveal_per_forward=args.reveal_per_forward,
             prefix_cache=warmup.past_key_values,
             prefix_logits=warmup.logits[:, -1:],
         )
@@ -132,6 +134,7 @@ def main() -> None:
                 block_size=args.block_size,
                 subblock_size=args.subblock_size,
                 threshold=args.threshold,
+                reveal_per_forward=args.reveal_per_forward,
                 prefix_cache=initial.past_key_values,
                 prefix_logits=initial.logits[:, -1:],
                 stats=decode_stats,
@@ -156,6 +159,7 @@ def main() -> None:
         "block_size": args.block_size if args.mode == "bdlm" else None,
         "subblock_size": args.subblock_size if args.mode == "bdlm" else None,
         "threshold": args.threshold if args.mode == "bdlm" else None,
+        "reveal_per_forward": args.reveal_per_forward if args.mode == "bdlm" else None,
         "denoise_forwards": decode_stats.get("denoise_forwards") if args.mode == "bdlm" else None,
         "cache_update_forwards": decode_stats.get("cache_update_forwards") if args.mode == "bdlm" else None,
         "tokens_per_forward": decode_stats.get("tokens_per_forward") if args.mode == "bdlm" else None,

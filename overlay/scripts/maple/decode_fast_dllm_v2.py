@@ -38,11 +38,14 @@ def decode(
     block_size,
     subblock_size,
     threshold,
+    reveal_per_forward=None,
     prefix_cache=None,
     prefix_logits=None,
     use_prefix_cache=True,
     stats=None,
 ):
+    if reveal_per_forward is not None and reveal_per_forward < 1:
+        raise ValueError("reveal_per_forward must be positive")
     prompt_length = input_ids.shape[1]
     target_length = prompt_length + max_new_tokens
     denoise_forwards = 0
@@ -100,10 +103,15 @@ def decode(
                 probabilities, candidates = logits.softmax(-1).max(-1)
                 masked = input_ids[:, subblock_start:subblock_end].eq(mask_id)
                 confidence = probabilities.masked_fill(~masked, -torch.inf)
-                reveal = (confidence > threshold) & masked
-                unfinished = masked.any(-1)
-                rows = torch.where(unfinished)[0]
-                reveal[rows, confidence[rows].argmax(-1)] = True
+                if reveal_per_forward is None:
+                    reveal = (confidence > threshold) & masked
+                    rows = torch.where(masked.any(-1))[0]
+                    reveal[rows, confidence[rows].argmax(-1)] = True
+                else:
+                    reveal = torch.zeros_like(masked)
+                    indices = confidence.topk(min(reveal_per_forward, confidence.shape[-1]), dim=-1).indices
+                    reveal.scatter_(1, indices, True)
+                    reveal &= masked
                 span = input_ids[:, subblock_start:subblock_end]
                 span[reveal] = candidates[reveal]
                 accepted_tokens += int(reveal.sum())
@@ -151,6 +159,7 @@ def main():
     parser.add_argument("--block-size", type=int, default=32)
     parser.add_argument("--subblock-size", type=int, default=8)
     parser.add_argument("--threshold", type=float, default=0.9)
+    parser.add_argument("--reveal-per-forward", type=int)
     args = parser.parse_args()
     if args.block_size % args.subblock_size:
         raise ValueError("block-size must be divisible by subblock-size.")
@@ -200,6 +209,7 @@ def main():
             block_size=args.block_size,
             subblock_size=args.subblock_size,
             threshold=args.threshold,
+            reveal_per_forward=args.reveal_per_forward,
             stats=decode_stats,
         )
         seconds = time.perf_counter() - started

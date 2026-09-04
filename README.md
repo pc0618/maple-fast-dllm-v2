@@ -117,12 +117,19 @@ OSL 1,024, batch 32 it reaches **412.88 tok/s**, 27.8x the uncached BDLM rate an
 
 Both deterministic random tokens and a natural 128-token sample measured exactly
 1.0 accepted token per denoiser forward. The 250M-token checkpoint therefore has
-not yet learned Fast-dLLM v2's expected parallel-token gain; a projected result
-at TPF near 2 is not reported as measured throughput. The cache boundary follows
+not yet learned Fast-dLLM v2's expected parallel-token gain. Forcing exactly TPF
+2 as a systems control reaches **795.21 tok/s** on the same 8,192/1,024, batch-32
+point: 1.93x the TPF-1 decoder and 1.84x AR. This is not quality-safe decoding.
+On 32 matched zero-shot MMLU generation prompts, learned acceptance scored 4/32
+with 7/32 parseable answers, while forced TPF 2 scored 1/32 with 4/32 parseable;
+all forced samples hit the 512-token cap. Raw results are under
+`results/decode-prefix-cache/` and `results/mmlu-tpf-quality/`.
+
+The cache boundary follows
 the local Block Diffusion Language Model Hybrids paper/code: only the completed
 prefix is invariant. Subblock-state caching, active-set shrinking, and latent
 reuse remain disabled because they are approximate for this checkpoint's dense
-within-block attention. Raw optimized results are in `results/decode-prefix-cache/`.
+within-block attention.
 
 An earlier checkpoint at step 1,272 (approximately 667M source tokens) predates
 the normalized Switch-loss experiment:

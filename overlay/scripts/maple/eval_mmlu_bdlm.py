@@ -70,6 +70,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--block-size", type=int, default=32)
     parser.add_argument("--subblock-size", type=int, default=8)
     parser.add_argument("--threshold", type=float, default=0.9)
+    parser.add_argument("--reveal-per-forward", type=int)
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--num-shards", type=int, default=1)
     parser.add_argument("--shard-index", type=int, default=0)
@@ -189,6 +190,7 @@ def main() -> None:
                 block_size=args.block_size,
                 subblock_size=args.subblock_size,
                 threshold=args.threshold,
+                reveal_per_forward=args.reveal_per_forward,
             )
         if not args.one_token:
             tokens = output[0, input_ids.shape[1] :]
@@ -251,6 +253,7 @@ def main() -> None:
         "block_size": args.block_size if args.mode == "bdlm" else None,
         "subblock_size": args.subblock_size if args.mode == "bdlm" and not args.one_token else None,
         "threshold": args.threshold if args.mode == "bdlm" and not args.one_token else None,
+        "reveal_per_forward": args.reveal_per_forward if args.mode == "bdlm" and not args.one_token else None,
         "shard_index": args.shard_index,
         "num_shards": args.num_shards,
         "subjects": subjects,

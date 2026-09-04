@@ -1,0 +1,453 @@
+{
+  "summary": {
+    "model": "/mnt/data/VeOmni-maple/evals/exports/global_step_477",
+    "mode": "bdlm",
+    "accuracy": 0.03125,
+    "parse_rate": 0.125,
+    "correct": 1,
+    "examples": 32,
+    "generated_tokens": 16384,
+    "tokens_per_second": 20.95144421518116,
+    "examples_per_second": 0.0409207894827757,
+    "seconds": 781.9985978879849,
+    "seed": 1234,
+    "num_fewshot": 0,
+    "max_new_tokens": 512,
+    "one_token": false,
+    "block_size": 32,
+    "subblock_size": 8,
+    "threshold": 0.9,
+    "reveal_per_forward": 2,
+    "shard_index": 0,
+    "num_shards": 4,
+    "subjects": {
+      "abstract_algebra": {
+        "accuracy": 0.0,
+        "count": 1
+      },
+      "clinical_knowledge": {
+        "accuracy": 0.0,
+        "count": 1
+      },
+      "college_chemistry": {
+        "accuracy": 0.0,
+        "count": 1
+      },
+      "college_mathematics": {
+        "accuracy": 0.0,
+        "count": 1
+      },
+      "elementary_mathematics": {
+        "accuracy": 0.0,
+        "count": 2
+      },
+      "formal_logic": {
+        "accuracy": 0.0,
+        "count": 1
+      },
+      "high_school_biology": {
+        "accuracy": 0.0,
+        "count": 1
+      },
+      "high_school_european_history": {
+        "accuracy": 0.0,
+        "count": 2
+      },
+      "high_school_government_and_politics": {
+        "accuracy": 1.0,
+        "count": 1
+      },
+      "high_school_macroeconomics": {
+        "accuracy": 0.0,
+        "count": 1
+      },
+      "high_school_microeconomics": {
+        "accuracy": 0.0,
+        "count": 1
+      },
+      "high_school_physics": {
+        "accuracy": 0.0,
+        "count": 1
+      },
+      "high_school_statistics": {
+        "accuracy": 0.0,
+        "count": 1
+      },
+      "high_school_world_history": {
+        "accuracy": 0.0,
+        "count": 1
+      },
+      "machine_learning": {
+        "accuracy": 0.0,
+        "count": 1
+      },
+      "medical_genetics": {
+        "accuracy": 0.0,
+        "count": 1
+      },
+      "miscellaneous": {
+        "accuracy": 0.0,
+        "count": 2
+      },
+      "moral_disputes": {
+        "accuracy": 0.0,
+        "count": 1
+      },
+      "moral_scenarios": {
+        "accuracy": 0.0,
+        "count": 1
+      },
+      "nutrition": {
+        "accuracy": 0.0,
+        "count": 1
+      },
+      "philosophy": {
+        "accuracy": 0.0,
+        "count": 1
+      },
+      "prehistory": {
+        "accuracy": 0.0,
+        "count": 2
+      },
+      "professional_law": {
+        "accuracy": 0.0,
+        "count": 3
+      },
+      "professional_medicine": {
+        "accuracy": 0.0,
+        "count": 1
+      },
+      "professional_psychology": {
+        "accuracy": 0.0,
+        "count": 1
+      },
+      "security_studies": {
+        "accuracy": 0.0,
+        "count": 1
+      }
+    },
+    "complete": true
+  },
+  "records": [
+    {
+      "sample_id": 3431,
+      "subject": "high_school_european_history",
+      "gold": "C",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 23.00729152499116,
+      "text": "We\nThe passage the the to of the,, the of of the, and of the of of the of of the of of of of of, the of of of the of of of, the of of of the of of of of of of of of, the of of of the, the of of of the of of of of of of of of of of of of of of of of, the of of of the, the of of of the, the of of of the, of of of of the, of of of of the, of of of of the, of of of of the, of of of of the, of of of of of of of of of of of of of of of, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the, the of of of the,"
+    },
+    {
+      "sample_id": 4137,
+      "subject": "high_school_macroeconomics",
+      "gold": "D",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 20.22899480900378,
+      "text": "We\nThe\nThe question is: \" \"In\" followed \"In\" the \"In\"\" the the \"In\" the the \"In the \"In\" the the \" \"In\" the the \" \"In\" the the \" \"In\" the the \" \"In\" the the \"In\"\" the the \" \"In\" the the \" \"In\" the the \" \"In\" the the \" \"In\" the the \" \"In\"\" the \" \"In\" the the \" \"In\" the the \" \"In\" the the \" \"InIn\"\" the the \"In\"\"\"\" the \" \"In\"\" the \"In\" the \" \"InIn\" the the \"In\"\" the\" \"\"\"\"\" the \"In\"\" the \"\"\"\"\" the \"In\"\" the \" \"In\"\" the \"In\"\" the \"In\"\" the \"In\"\" the \"In\"\"\" the \"In\"\" the \" \"In\"\"\" the \" \"In\"\" the \" \"\" the \"In\"\" the \"In\"\" the \"In\"\" the \"In\"\" the \"InIn\" the\"\"\"\" the\"InIn\"\" the\"\"\"\" the \"In\"\"\" the \"In\"\" the \"In\"\" the \"In\"\" the \"\"\" the \"In\"\"\" the \"In\"\" the \"\"\"\" the \"In\"\" the\"\" the \"\"\"\" the\" the\"\"\"\" the \"In\"\"\"\"\"\" the \"In\"\" the\"\"\" the \"In\"\"\" the\"InIn\" the\" the\"\"\"\" the \"In\"\" the\" \"In\"\" the\"\" the \"In\"\" the\" the\"\" the\"\"\"\"\" the\"In\"\" the\" the\" the\" the\"\" the\"\" the\"In\"\" the\" the\" the\" the\" the\" the\" the\" the\" the\" the\" the\" the\" the\" the\" the\"\" the\"\" theIn\"\" the\" the\"\" the\" the\"\" the\" the\" the\"\"\" the\"In\"In\" the\"\"\" the\"In\" the\"\" the\"In\" the\" the\"\" the\"In\"\" the\"\" theIn\"\" the\" the\"In\""
+    },
+    {
+      "sample_id": 4583,
+      "subject": "high_school_microeconomics",
+      "gold": "B",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 24.20760473801056,
+      "text": "The\nThe question is: \" \"The with the the step step, the step step step, the step step, the step step step,, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the,, the,, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the,,, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the,,, the, the, the, the, the, the, the, the, the, the, the, the, the, the,,, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the,,, the, the, the, the, the, the, the, the, the, the, the, the, the, the,,,, the, the, the, the, the, the, the, the, the, the, the, the,, the, the,,, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the, the,, the, the, the,, the,"
+    },
+    {
+      "sample_id": 5628,
+      "subject": "high_school_statistics",
+      "gold": "D",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 25.77013972698478,
+      "text": "The\n\nThe question is:: \" \"If the between the height and weight weight is is 1, and the class is is 1, and the heights are height in centimeters, what the correlation between between the and and weight is is?\" The options are A, B0.65, C00., D0.65.\n\nThe options are A,0.6,00.,,0.65.\n\n The options is: A0.65, B00.,, C0.1, D0.65.\n\nThe The question is:: \" the between between the and weight is is is 1 the class is is 1 and the heights are height in centimeters, what the the between between the and weight is is?\" The options are A0..5, B00., C0.1, D0.65.\n\nThe question is: \"the the between the and and weight is is is 1, the class is is is 1, and the heights are height in centimeters, what the the between between the and and weight is is?\" The options are A0.55, B00.,, C0.1, D0.65.\n\nThe options are A0055, B00.,, C0.1, D0.65.\n\nThe options are A,0.55,,00.,0..65.\n\n The question is: \"the the between between the and weight is is is is 1 the class is is is 1 and the heights are height in centimeters, what the the between between between the and and weight is?\"?\" The options are A0.55, B00.0, C0.., D0.65.\n\nThe options are A0.55, B00.0, C0.1, D0..65.\n\nThe question is: the between the and and weight is is is 1, the class is is is 1, and the heights are in centimeters, what the the between between the and and weight is?\" The options are A0.55, B00.0, C0.., D0..65.\n\n options are A0.55, B00.0, C0.1, D0.65.\n\nThe options is: A between between between"
+    },
+    {
+      "sample_id": 2184,
+      "subject": "elementary_mathematics",
+      "gold": "B",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 24.985614840028575,
+      "text": "The\nThe Tisha wrote a a riddle, \"I have, the,,,, and,,, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and and, and, and, and,, and, and, and, and, and and, and, and, and, and, and, and, and, and, and, and and, and, and and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and, and,, and, and and, and, and, and, and, and, and, and, and, and, and, and, and, and,,"
+    },
+    {
+      "sample_id": 8113,
+      "subject": "miscellaneous",
+      "gold": "C",
+      "prediction": "B",
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 30.667456591996597,
+      "text": "The\nThe user is asking a step-by-step a multiple-choice question. a step question requires a a specific answer. The step-by-step a a single question: a condition question. a a condition question. a condition question a a condition question a condition a condition a condition a condition a condition a condition a condition a condition a a condition a a condition condition a a condition a condition a condition a condition condition a a condition condition a a condition condition a a condition condition a a condition condition a a condition a a condition a a condition condition a a condition condition a a condition condition a a condition condition a a condition condition a a condition condition a a condition condition a a condition condition a a condition condition a a condition condition a a condition condition a a condition condition a a condition condition a a condition\nThe user's a step-by-step a step a single a single question. The step-by-step a a single question question: a a condition question a condition question. a condition question a a condition a condition a condition a a a condition a a condition a a condition a a condition a a condition a a a condition The user's response is \\ a a condition, \\boxed{A a} a \\ a condition a a a a condition a a a condition a a a, \\boxed{B} a \\ a condition a a a a a a a a a a a a a a a a a a{C} a a condition a a a a a a a a a a a a a a a a a a{D} a The user's's response is \\boxed{A} \\boxed{B} a \\ a condition a a a a a a a a a a a a a a a a{C} a a condition a a a a a a a a a a a a a a a a a a{D} a a condition a a a a a a a a a a a a condition a a condition condition a a condition a condition condition a a condition condition a a condition condition a a condition condition a a condition\\boxed\nThe user\nThe user's response is \\boxedboxed step-by-step} a a single question. question. The step-by-step requires a single question: a condition question a a condition a a a a a a a a a a a a a a a a a a a a a a The user's response response is \\boxedboxed{} a a a condition a a a a a a a a a a a a a a a a{D} a"
+    },
+    {
+      "sample_id": 2181,
+      "subject": "elementary_mathematics",
+      "gold": "A",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 24.79332031100057,
+      "text": "The\nThe\nThe question is: \" \"The the following is the\nThe the the the the the following is the\nThe the the the the the following is the\n the the the the the the following is the\nThe the the the the the the following is the\n\nThe\n the the the the the following following is the the\nThe the the the the the the following following is the\nThe the the the the the the following following is the the\nThe the the the the the the following following is the the\nThe the the the the the the following following following following is the\n following the the the the the the following following following is the\nThe the the the the the the following following following following is the\nThe the the the the the the following following following following is the\nThe the the the the the the following following following following the following\nThe the the the the the the following following following following the following following\nThe the the the the the the following following following following following the following following\n\nThe\nThe\n the the the the the following following following following following the following following\nThe\n the the the the the following following following following following the following following\nThe\n the the the the the following following following following following the following following\nThe\n\n the the the the the following following following following following the following following\nThe\n\nThe\nThe the the the following following following following following following following following\nThe\nThe the the the the following following following following following the following\n\nThe\n\nThe\nThe the following following following following following following following following following\nThe\nThe the the the following following following following following the following\n\nThe\n\nThe\n the following following the following following following following following following following\nThe\nThe the following following the following following following following following following\nThe\nThe the the following following the following following following following the following\n\nThe\nThe\n the following following the following following following following following following\nThe\nThe\n the following the following following following the following following\n\nThe\nThe the following the following following following following following following\nThe\nThe\n the the following following following following following following following\n\nThe\nThe\n the following following following following following following following\n\nThe\nThe\n the following following following following following following following\n\nThe\nThe the following following following following following following\n\nThe\nThe the following following following following following following\n\nThe\nThe the following following following following following following\n\n"
+    },
+    {
+      "sample_id": 12397,
+      "subject": "professional_medicine",
+      "gold": "D",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 25.43753704399569,
+      "text": "The question question is: which of of the following is the most most appropriate management for a  with asthma00% and and000% and? The options options are A A)120, B) Fexadet,, C) Increased use of the albuter D) Init inhaler a daily cort, and) Chest x x-ray.\n\nThe options are A)120, B) Fexadet, C) Increased but the inhaler, D) Initinitiation a a daily cort and.\n\nThe question question is which of the following options is the most most appropriate management for a patient000000% and and00000% and the the most appropriate appropriate management for a patient000000% and000000% and the the most most appropriate appropriate management for a patient00000000% and000000% and the the most most appropriate appropriate management for a patient00000000% and000000% and the the most most appropriate appropriate management for a patient000000000% and0000000% and the most appropriate appropriate management for a patient0000000000000% and0000000% and the most appropriate appropriate management for a patient00000000000000% and00000000%00 the most most appropriate for a patient00000000000000%0000000% and the most appropriate appropriate management for a patient00000000000000000% and000000000000000% and the most appropriate appropriate management for a patient0000000000000000%00000000 and the most appropriate appropriate management for a patient0000000000000000000% and0000000000000000 and the most appropriate appropriate management for a patient00000000000000000000% and0000"
+    },
+    {
+      "sample_id": 597,
+      "subject": "clinical_knowledge",
+      "gold": "C",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 25.27093955897726,
+      "text": "The\nThe question is is the a multiple choice the the the the the of the the the the the of the the the of the the of of the the of of the the of of the the of of the the of of the the of of the the of of the the of of the of the of the of the of of the of of the of the of the of the of the of the of the of the of the of the of the of the of the of the of the of the of the of the of the of the of the of the of the of the of the of the of the the of of the the of of the of the of of the of of the of the of the of the of the of the of the the of of the the of of the the of of the of of the of of the of the of the of the of the of the of the of the of the the of of the of of of the of the of the of the of the of the of the of the of the of the of the of the of the of the of of the of of the of the of the of the of the of the of the of the of the of the of the of the of the the of of the of the of the of the of the of the of the of the of the of the of the of the of the the of of the the of of the of of of the of the of of of the of the of the of the of the of the of the of of the of the of of the of the of the of the of the of the of of the of of the of of the of of the of the of of of the of the of the of the of of the of of the of the of of the of of the of the of the of the of the of the of of the of of the of the of of the of of the of the of of the of of the of the of of the of of the of the of of the of of the of the of of of the of the of the of of of the of the of of the of the of of the of of the of of the of of the of of of of the of the of the of of the of of the of the of the of the of the of of the of of the of the of of of of of the of the of of the of the of of the of of the of of the of the of of of of the of the of the of of of the"
+    },
+    {
+      "sample_id": 7317,
+      "subject": "medical_genetics",
+      "gold": "B",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 25.260771039000247,
+      "text": "We\nThe\nThe question is: \" \"The\n\"\"\"\"\"\"\"\" \"\"\"\" \"\"\" \"\"\" \"\"\"\"\" \"\"\" \"\" \"\"\" \"\"\" \"\" \"\"\" \"\"\" \"\" \"\"\" \"\"\" \"\" \"\"\" \"\"\" \"\" \"\"\" \"\"\" \"\" \"\"\" \"\"\" \"\" \"\"\" \"\"\" \"\" \"\"\" \"\"\" \"\" \"\"\" \"\"\" \"\" \"\"\" \"\"\" \"\" \"\"\" \"\"\" \"\" \"\"\"\" \"\"\" \"\" \"\" \"\"\" \"\" \"\"\"\" \"\"\" \"\"\"\" \"\"\" \"\" \"\"\" \"\"\" \"\" \"\"\"\" \"\"\" \"\" \"\" \"\"\" \"\" \"\"\"\" \"\"\" \"\"\" \"\"\" \"\"\" \"\" \"\"\"\" \"\" \"\"\"\"\" \"\" \"\"\"\"\" \"\" \"\" \"\" \"\" \"\"\" \"\"\" \"\"\" \"\" \"\"\"\" \"\"\" \"\" \"\"\" \"\"\" \"\" \"\"\"\" \"\"\" \"\" \"\" \"\"\" \"\" \"\" \"\" \"\"\" \"\"\" \"\" \"\"\" \"\"\" \"\"\" \"\"\" \"\" \"\"\" \"\" \"\"\" \"\" \"\" \"\" \"\" \"\"\" \"\"\" \"\"\" \"\"\" \"\" \"\" \"\" \"\" \"\" \"\" \"\"\" \"\"\" \"\" \"\"\" \"\" \"\"\" \"\" \"\" \"\" \"\"\" \"\"\" \"\" \"\" \"\" \"\"\" \"\"\" \"\" \"\" \"\" \"\" \"\" \"\"\" \"\"\" \"\" \"\" \"\" \"\" \"\" \"\" \"\" \"\" \"\" \"\" \"\" \"\"\"\"\" \"\" \"\"\" \"\"\" \"\" \"\"\" \"\" \"\" \"\" \"\"\" \"\"\" \"\" \" \"\" \"\" \"\" \"\"\"\" \"\" \"\"\" \"\" \"\" \"\" \"\" \"\" \"\" \"\" \"\" \"\" \"\" \"\" \"\" \"\" \" \"\" \"\" \" \"\" \"\" \" \"\"\" \"\" \"\" \"\"\" \""
+    },
+    {
+      "sample_id": 11544,
+      "subject": "professional_law",
+      "gold": "B",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 25.543678996997187,
+      "text": "We\nThe\nThe\nThe\nThe\nThe\nThe\n\nThe\n\nThe\nTheTheThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\n\nThe\n\nThe\nThe\nThe\n\nThe\n\nThe\nThe\nThe\n\nThe\n\nThe\nThe\nThe\nThe\n\nThe\n\nThe\nThe\nThe\nThe\n\nThe\n\nThe\n\nThe\n\nThe\n\nThe\n\nTheThe\nThe\nTheThe\nTheThe\nThe\n\nThe\n\nThe\n\nThe\n\nThe\n\nThe\n\nThe\n\nTheThe\nThe\nTheThe\nTheThe\nThe\nTheThe\nTheThe\nThe\nThe\nThe\nThe\nTheThe\nThe\nTheThe\nThe\nThe\nThe\nThe\nTheThe\nTheThe\nThe\nThe\nThe\nThe\nThe\nTheThe\nTheThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nTheThe\nTheThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nTheThe\nTheThe\n\nTheThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\n\nThe\n\nThe\n\nTheThe\nThe\n\nTheThe\nThe\nThe\nThe\nThe\nThe\n\nTheThe\n\nTheThe\nThe\nThe\nThe\n\nTheThe\n\nTheThe\nTheThe\nTheThe\nThe\nThe\nThe\nThe\nThe\nThe\n\nThe\n\nThe\n\nThe\n\nThe\n\nTheThe\nThe\nThe\nThe\nThe\n\nTheThe\nThe\nThe\nThe\n\nTheThe\n\nThe\n\nThe\nThe\n\nThe\n\nThe\n\nTheThe\n\nTheThe\n\nThe\n\nThe\n\nTheThe\n\nThe\nThe\nThe\nThe\n\nThe\n\nTheThe\n\nTheThe\nThe\n\nThe\nThe\nThe\nTheThe\nThe\nTheThe\nTheThe"
+    },
+    {
+      "sample_id": 3738,
+      "subject": "high_school_government_and_politics",
+      "gold": "D",
+      "prediction": "D",
+      "correct": true,
+      "generated_tokens": 512,
+      "seconds": 25.08230212700437,
+      "text": "The\nThe question is: \" \"The practice of \\\"\"\"\" is \\boxed{A}\" by a group, and \\ \\ \\boxed{B} \\ \\boxed \\boxed{} \\ \\boxed{D} \\ \\boxed \\boxed{\" by a group\" by a, which the user to \\ \\boxed{A} \\ \\boxed{B} \\boxed{C} \\boxed \\boxedboxed{} \\ \\boxed \\boxed{D\" by the user, the the user the the \\boxed{D} \\ \\boxed \\boxed{} \\boxed \\boxed{ \\boxed{} \\ \\boxed \\boxed{} \\boxed \\boxed{} \\boxed{D} \\ the user user, the user the the \\ \\boxed{} \\ \\boxed \\boxed{} \\boxed \\boxed{ \\ \\ \\boxed{} \\ \\boxed \\boxed} \\ \\boxed \\boxed{} \\boxed \\boxed \\boxed{ \\boxed{} \\ \\boxed \\boxed \\boxed{ \\boxed{} \\ \\boxed \\boxed{} \\boxed{ \\ \\boxed \\boxed{} \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxedboxed{ \\boxedboxed{} \\ \\boxed \\boxed{} \\ \\boxed{ \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxedboxed{ \\boxedboxed{} \\ \\boxed \\boxed{} \\ \\boxed \\ \\boxed{ \\boxed{ \\boxed \\boxed \\boxed \\boxed \\boxedboxed \\ \\ \\boxed{} \\ \\boxed \\ \\boxed{ \\boxed{ \\boxed{ \\boxed \\boxed \\boxed \\boxed \\boxed \\boxedboxed{ \\boxed \\boxed \\boxed{ \\boxed{ \\ \\boxed{ \\ \\boxed{ \\boxed{ \\ \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed{ \\boxed{ \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxedboxed{ \\boxed{} \\boxed \\ \\ \\boxed{ \\ \\boxed{ \\ \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxedboxed{ \\boxedboxed{} \\ the user, the \\ \\ \\ \\ \\boxed{} \\ \\boxed \\ \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed \\boxed the user user, the \\Aboxed{"
+    },
+    {
+      "sample_id": 9480,
+      "subject": "nutrition",
+      "gold": "A",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 25.054365883988794,
+      "text": "We\nThe question question asks: which inherited of zinc metabolism gives rise rise to zinc deficiency deficiency? The options options are A, B, B, C, D D.\n\n. Ac question:: \" question is \"The question is \"The question is \"The\" question\" question question question question question\" question is \"The question is \"\" The question is \"The\" question question question question question question\" question question is \" question\"\" question question question question question question\" question is \"The\" question question is \"The\" question question is question question question question question question question\" question is \"The\"\" question question question question question question question\" question is \"The\"\" question question question question question question question\" is \" question\"\" question question question question question question\" is \" \"The\"\" question question question question question question question\" is \" \"The\" question question question question question question question is \"The question\" question question question question question question question is \" \"The\" question question question question question\" question question is question\" question question question question question question question\" question is question\" question question question question question question question\" question is \"The\" question question question question question question question\" question question is question\" question question question question question question question\" question is \"\"\" question question is question\"\" question question question question question question question question\" question is \" question\" question question question question question question question question\" question\"\" question question is question\"\" question question is question\"\" question question is question\" question question question question\" question{D}\"{{Z}\" question question is question\"\" question question is question\" question\" question question question question question\" question\"{{{D}\"{{Z}\" question question is \"The\" question question is \"The\" question question is question\"\" question\" question question question{D}{{Z} question question is \"\" question\"\" question is \"The\" question question question question\" question question\"{{{{{D} {{Z}\" question is \"The\"\"{{{D} {{Z} question question is \"The\"\"{{{D} {{Z} question question is \"The\" question{D{Z}{D} question{{Z} {{r}{{Z{{Z{{{Z} {{{{{{{Z} {Z{{{{Z} {Z{{Z{"
+    },
+    {
+      "sample_id": 10168,
+      "subject": "prehistory",
+      "gold": "A",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 25.190064283000538,
+      "text": "We the question: multiple choice question, \"What was Chinese technique of earth earth, used in the construction of house walls and defensive structures options are A A. Hang-tu, B. Sculapimancy C, D. Qin manufacture manufacture. The options is: A. Hang-tu, B. Scapulimancy, C. Lung-shan, D. Qin manufacture manufacture.\n\n The question is is \" technique technique of earth earth, used in in the construction of house walls and defensive defensive structures\". The options are: A A. Hang-t-tu, B. Scapulimancy,, C. Lung-shan,, D. Qin manufacture manufacture.\n\n The correct is is \"st technique technique technique technique\" which the Chinese is \"stamped technique technique technique technique. The the Chinese is \" \"stamped technique technique technique technique technique technique\"\" meaning the technique is is technique, technique is is technique, technique technique technique technique technique.\n\n the Chinese is is \"stamped technique technique technique technique technique technique\" the Chinese is is \" \"stamped technique technique technique technique technique technique\"\" meaning the technique is is is technique, technique is is is technique, technique technique technique technique technique technique.\n\n the Chinese is is \"stamped technique technique technique technique technique technique technique technique\" technique is is is technique, technique technique technique technique technique technique technique.\n\n the the Chinese is is \"stamped technique technique technique technique technique technique technique technique is technique is is technique, technique technique technique technique technique technique technique\" the Chinese is is technique is is technique, technique technique technique technique technique technique technique.\n\n technique is technique technique technique technique technique technique technique technique technique technique is the Chinese is is \" technique technique technique technique technique technique technique technique technique technique\" the the the is technique is is technique, technique technique technique technique technique technique technique technique technique.\n\n the the the is technique is technique, technique technique technique technique technique technique technique technique technique.\n\n the the the is technique technique technique technique technique technique technique technique technique technique.\n\n the the the is technique technique technique technique technique technique technique technique technique technique technique technique the the the is technique technique technique technique technique technique technique technique technique technique technique technique technique technique the the the is technique technique technique technique technique technique technique technique technique technique technique technique technique technique technique the the the is technique technique technique technique technique technique technique technique technique technique technique technique technique technique technique the the the is technique technique technique technique technique technique technique technique technique technique technique technique technique technique the the the is technique technique technique technique technique technique technique technique technique technique technique technique technique"
+    },
+    {
+      "sample_id": 6078,
+      "subject": "high_school_world_history",
+      "gold": "B",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 25.237780755007407,
+      "text": "The\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\n the\nThe\nThe\n\nThe\n\nThe\n\nThe\n\nThe\nThe\n\nThe\n\nThe\nThe\nThe\n\n\nThe\nThe\nThe\nThe\n\nThe\n\nThe\n\nThe\n\nThe\nThe\n\nThe\n\nThe\nThe\n\nThe\n\nTheThe\n\nThe\nThe\nThe\nThe\n\nThe\n\nTheThe\n\nThe\nTheThe\nThe\n\nTheThe\n\nTheThe\n\nTheThe\n\nTheThe\n\nTheThe\n\nTheThe\n\nTheThe\n\nTheThe\n\nTheThe\n\nTheThe\n\nTheThe\n\nTheThe\n\nTheThe\n\nTheThe\n\nTheThe\n\nTheThe\nThe\nTheThe\nTheThe\nTheTheThe\nTheTheThe\nTheTheThe\nTheThe\nTheThe\n\n\n\nThe\nThe\n the\nTheThe\nTheTheThe\nTheTheThe\nTheTheThe\nTheTheThe\nTheTheThe\nTheTheThe\nTheTheThe\nTheThe\nTheThe\nTheTheThe\nTheTheThe\nTheTheThe\nTheTheThe\nTheTheThe\nTheTheThe\nTheTheThe\n\nTheThe\nThe\nTheTheThe\nTheTheThe\nTheTheThe\nTheTheThe\nTheTheThe\nTheTheTheThe\nTheTheTheThe\nTheTheThe\nTheTheThe\nTheTheThe\nTheTheThe\nTheTheThe\nTheTheThe\nThe\nTheThe\nTheThe\nTheTheThe\nTheTheThe\nTheTheThe\nTheTheThe\nTheTheThe\nTheTheTheTheThe\nTheTheThe\nTheTheThe\nTheTheThe\nTheTheThe\nTheTheThe\nTheTheTheThe\nTheTheTheThe\nTheTheTheTheThe\nTheTheThe\nTheTheThe\nTheTheTheThe\nTheTheTheThe\nTheTheTheTheThe\nTheTheTheTheTheTheThe"
+    },
+    {
+      "sample_id": 74,
+      "subject": "abstract_algebra",
+      "gold": "D",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 25.17458398101735,
+      "text": "The\nThe statement is: \" \"The set of rotations in the abstract group is isomorphic to the set of rotations in the di group.\".\"\n\nThe\nThe is:omorphic to the set of rotations in in the di group.\n\n.\n\nThe\nThe is isomorphicomorphic to the set of rotations in in the group.\n\n.\n\nThe\nThe is is isomorphicomorphic to the set of rotations rotations in in the group.\n\n.\n\nThe\nThe is is isomorphicomorphic to the set of rotations rotations in in the group.\n\n.\n\nThe\nThe is is isomorphicomorphic to the set of rotations rotations in in the group.\n\n.\n\nThe\nThe is is is isomorphicomorphic to the set of rotations rotations in in group.\n\n.\n\nThe\nThe is is isomorphicomorphic to the set of rotations rotations in in the group.\n\n.\n\nThe\nThe is is is isomorphicomorphic to the set of rotations rotations in in group.\n\n.\n\nThe\nThe is is isomorphicomorphic to the set of rotations rotations in in group group.\n\n.\n\nThe\nThe is is is isomorphicomorphic to the set of rotations rotations in in in group group.\n\n.\n\nThe\nThe is is isomorphicomorphic to the set of rotations rotations in in in group group.\n\nThe\n\nThe\n is is isomorphicomorphic to the set of rotations rotations in in in group group.\n\nThe\nThe is is isomorphicomorphic to the set of rotations rotations in in in group.\n\n.\n\nThe\nThe is is isomorphicomorphic to the set of rotations rotations in in in in group group.\n\n.\n\nThe\nThe is is isomorphicomorphic to the set of rotations rotations in in in in group group.\n\n.\n\nThe\nThe is is isomorphicomorphic to the set of rotations rotations in in in in group group.\n\n.\n\nThe\nThe is is isomorphicomorphic to the set of rotations rotations in in in in group group.\n\n.\n\nThe\nThe is is isomorphicomorphic to the set of rotations rotations in in in in group group.\n\n.\n\nThe\nThe is is isomorphicomorphic to the set of rotations rotations in in in in group group.\n\n.\n\nThe\nThe is is isomorphicomorphic to the set of rotations rotations in in in in group group.\n\nThe\nThe is.\n\nThe\n is is isomorphicomorphic to the set of rotations rotations in in in in group group.\n\nThe\nThe is is isomorphicomorphic to set of rotations rotations in in in in group group.\n\nThe\nThe is is is isomorphicomorphic the set of rotations rotations in in in in group group.\n\nThe\n.\n\n"
+    },
+    {
+      "sample_id": 3402,
+      "subject": "high_school_european_history",
+      "gold": "A",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 22.827130203979323,
+      "text": "The\nThe question is: \" which of the \"\"\"\"\" to the \" \"\"\" is the in the the\"\"\" the the the the the the\"\" the the the the the the\" \"\" the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the"
+    },
+    {
+      "sample_id": 10299,
+      "subject": "prehistory",
+      "gold": "B",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 19.90092893599649,
+      "text": "We\nThe question question is: \"The question is the the the the the the the the the the the the the the the the the the the the, the the the the the the the the the the the the the the the the the the the the the the the the the the the the the, the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the"
+    },
+    {
+      "sample_id": 13021,
+      "subject": "professional_psychology",
+      "gold": "C",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 25.178144235018408,
+      "text": "The question\nThe user is asking a multiple question, a \" question question. The user is a a \" question question. The a question question is a \" question question. The a question question a \" question question question. a question question question a \" question question question. a question question question. a \" question question question. a question question question. a question question question question. a question question question. a question question question. a question question question. a question question question. a question question question question. question question question question. question question question question. question question question question. question question question question. question question question question question. question question question question question. question question question question. question question question question. question question question question question. question question question question. question question question question. question question question question question. question question question question. question question question question. question question question question question question. question question question question. question question question question question. question question question question question. question question question question question question question. question question question question question question question. question question question question question question question. question question question question question. question question question question question question question question question. question question question question question question question question question. question question question question question question question question question. question.. The question is\nThe user\nThe user\n\nThe user\n\nThe user\n\nThe user\nThe\nThe user\nThe user\nThe user\nThe\nThe user\nThe user\nThe\nThe user\nThe\nThe user\n\nThe user\n\nThe user\nThe user\nThe user\n The user user\nThe user user\nThe user user\nThe user user\nThe user user\n\n\nThe user\n\nThe user\nThe user\nThe user user\nThe user\nThe user\n\nThe user\n\nThe user\n\nThe user\n\nThe user\nThe user user\nThe user user\nThe user user\nThe user user\nThe user user\nThe user user\nThe user user\nThe user user\nThe user user\nThe user user\nThe user user\nThe user user\nThe user user\nThe user user\nThe user user\nThe user user\nThe user user\nThe user user\nThe user user\nThe user user\nThe user user\nThe user user\nThe user userTheThe user user\nThe user user\nThe user user\nThe user user\nThe user user\nThe user user\nThe user user\nThe user user\n\n"
+    },
+    {
+      "sample_id": 1167,
+      "subject": "college_mathematics",
+      "gold": "D",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 25.450325638026698,
+      "text": "The\nThe is a system linear system with  equations. The equations equations are:\n1. linear equations: x1 + x2 = 132\n22. linear equations equations: x1 + x22 = 1333\n3. linear equations equations:1x1 x2 =  1\n444 linear equations equations equations:11 x12 = 1144\n4. linear equations equations::11 x12 = 1144\nThe linear linear equations are:\n1. x1 + x2 = 3\n\n2. x1 + x22 = 1\n\n3. x1 x2 = = 1\n44. x1 x x2 = = \nThe linear linear linear equations are:\n:\n1. x1 + x2 = 3\n2. x1 + x22 = \n33. x1 x22 = 1\n44. x1 x x22 = 1\nThe linear linear linear equations equations are:\n:\n1. x1 + x2 = 3\n2. x1 + x22 = = 1\n33. x1 x22 = = \n44. x1 x x22 = =1\nThe linear linear linear linear equations equations are:\n1. x1 + x2 = \n2. x1 + x22 = = 1\n3. x1 x22 = = \n44. x1 x x22 = =1\nThe linear linear linear linear equations equations are:\n1. x1 + x2 = \n2. x1 + x22 = = 1\n3. x1 x22 = = \n44. x1 x x22 = =1\nThe linear linear linear linear equations equations are:\n1. x1 + x2 = = 3\n2. x1 + x22 = = 1\n3. x1 x22 = = = 1\n44. x1 x x22 = = 1\nThe linear linear linear linear equations equations equations are:\n1. x1 + x2 = 3\n2. x11 + x22 = 1\n33. x1 x22 = = 1\n44. x1 x x x22 = = 1\nThe linear"
+    },
+    {
+      "sample_id": 11761,
+      "subject": "professional_law",
+      "gold": "B",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 25.35095223900862,
+      "text": "The question\nThe question is:: \" \"The the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the"
+    },
+    {
+      "sample_id": 2762,
+      "subject": "high_school_biology",
+      "gold": "D",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 25.44542682901374,
+      "text": "The\nThe question is: \" \"The question\"\"\"\" and the options is a A, B,, C, or D. The question is: \"The question\"\"\"\" and \"The question\"\"\"\" is \"The question\"\"\"\" and \"The question\"\"\"\" is The question\"\"\"\" The question question is\"The question\"\"\"\" and The question question\"\"\"\" is The question\"\"\"\" The question question is\"The question\"\"\"\" and The question question\"\"\"\" is The question question\"\"\" The question question is\"The question\"\"\"\" and The question question\"\"\"\" is The question question\"\"\"\" The The question question\"\"\"\"\" is The question question\"\"\"\"\" The The question question\"\"\"\" is The question question\"\"\"\" and The question question\"\"\"\" is The question question\"\"\"\" and The question question question\"\"\" is The question question\"\"\"\" and The question question question\"\"\" is The question question\"\"\"\" and The question question question\"\"\" is The question question\"\"\"\" and The question question question\"\"\" is The question question\"\"\"\"\" The question question question\"\"\" is The question question\"\"\"\" and The question question question\"\"\" is The question question\"\"\"\"\" The question question question\"\"\" is The question question\"\"\"\" and The question question question\"\"\" is The question question\"\"\"\"\" The question question question\"\"The question\"\"\"\"\" and The question question question\"\"\" is\"The question\"\"\"\"\"\" and The question\"\"\"\"\" is The question question\"\"\"\"\" and The question question\"\")\" is\"The question\"\"\"\" and The question question\"\" is\"The question\"\"\"\" and\" question question\"\"\" is\"\" question\"\"\"\"\" and\" question\"\"\"\" is\" question\"\"\"\" and\" question question\"\" is\" question question\"\" and\" question\"\"\" and\" question\"\"\" is\" question\" question\"\" and\" question\"\" is\"\" and question\"\" question\"\" is\" question\"\" question\"\" and question\"\"\"\" is\" question question\"\" and\" question question\"\" is\" question question"
+    },
+    {
+      "sample_id": 7499,
+      "subject": "miscellaneous",
+      "gold": "A",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 30.653176158986753,
+      "text": "The\nThe question is: \" \"What was the first American college to American?\"?\"?\" with options are A, B, C, D D.. The options are are: Oberlin College, Dartmouth College, Grinnell College,, and Ant College.\n\nThe user is asking to \" the the first American American\"\" which seems the first American college to be coeduc. The options options are: Oberlin College, Dartmouth College, Grinnell College,, and Ant College.\n\nThe options are: A. Ober Oberlin, B. Dartmouth College,, C. Grell College,, D. Antio College.\n\nThe user is the first to \" the first American American college\"\" which is to answer the first American college to coeduc. The the options are the first American American college.\n\nThe options are: Ober. Oberlin,, B.. Dart,, C. Grinnell,,, D. Antioch.\n\nThe the first American American American college is Ant. Antioch College, which is option D.\n\nThe the first American the first American American college is Ant the first American American college is Antioioch, which which is option D.\n\nThe the the first American American the first American American college is Antioioch, which is option D.\n\nThe the the the first first American American college the first first American American college is Antioch, which which is option D.\n\nThe the the the first first American American college the first first American American college isioch, which is option D.\n\nThe the the the first first American American college the first first American American collegeioioch, which is option D.\n\nThe the the the first first American American college the first first American American collegeioioch, which is option D.\n\nThe the the the first first American American college the first first American American collegeioioch, which is option D.\n\nThe the the the first first American American college the first first American American collegeioioch, which option D.\n\nThe the.\n\nThe user the the the first first first American American college the the first first American American collegeioioch, which option D.\n\nThe the the the the first first American American college the first first American American collegeioioch, which option D.\n\nThe the the the the first first first American American collegeioioch, which is D.\n\nThe the the the first first American American American collegeioioch, which is option D.\n\nThe the the the the first first American"
+    },
+    {
+      "sample_id": 2446,
+      "subject": "formal_logic",
+      "gold": "A",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 25.449459234980168,
+      "text": "The\nThe\nThe\nThe\nThe\nThe\nTheThe\nThe\nThe\n\nThe\nThe\nThe\nThe\nThe\nThe\nTheThe\n\nThe\nThe\nTheThe\nTheThe\nTheThe\nThe\nThe\nThe\n\nThe\nTheThe\nThe\n\nThe\nTheThe\nThe\n\nThe\nTheThe\nThe\n\nThe\nTheThe\nThe\n\nThe\nTheThe\nThe\n\nThe\nTheThe\nThe\n\nThe\nTheThe\nThe\n\nThe\nTheThe\nThe\n\nThe\nThe\nThe\nThe\nThe\nTheThe\nThe\nThe\nTheThe\nTheThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\n\nThe\nTheThe\nThe\n\nThe\nTheThe\nThe\n\nThe\nThe\nTheThe\nThe\nTheThe\nThe\nTheThe\nThe\nThe\nTheThe\nTheThe\nTheThe\nTheThe\nThe\nTheThe\nTheThe\nTheThe\nThe\nThe\nTheThe\nThe\nTheThe\nTheThe\nTheThe\nTheThe\nThe\nTheThe\nTheThe\nThe\nTheThe\nTheThe\nTheThe\nThe\nTheThe\nThe\nTheThe\nThe\nTheThe\nTheThe\nTheThe\nTheThe\nTheTheTheThe\nTheThe\nThe\nTheThe\nThe\nTheThe\nTheThe\nTheThe\nTheThe\nTheTheTheTheThe\nTheTheThe\nTheTheTheThe\nThe\nTheThe\nTheTheTheThe\nTheThe\nTheThe\nTheThe\nTheTheTheTheThe\nTheTheThe\nTheTheThe\nTheTheTheThe\nTheTheThe\nTheThe\nThe\nThe\nThe\nTheThe\nThe\nThe\nTheThe\nThe\nTheThe\nTheThe\nThe\nTheThe\nTheThe\nThe\nTheThe\nThe\nTheThe\nTheTheThe\nThe\nTheThe\nTheThe\nTheThe\nThe\nTheThe\nThe\nTheThe\nThe\nThe\nThe\nThe\n\nThe\nThe\nTheThe\nTheThe\nThe\nTheThe\nThe\nTheThe\nTheThe\nTheThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nTheThe\nTheThe\nThe\nTheThe\nThe\nTheThe\nTheThe\nThe\n"
+    },
+    {
+      "sample_id": 13304,
+      "subject": "security_studies",
+      "gold": "B",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 25.74880164102069,
+      "text": "The\nThe\nThe\nThe\nThe\nThe\nTheThe\nThe\nThe\nThe\nTheTheThe\nThe\nThe\nTheTheThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\n\nThe\n\nThe\n\nThe\nThe\nThe\nThe\nThe\nTheThe\nThe\nThe\nThe\n\nThe\nThe\nThe\nTheThe\nThe\nTheThe\nTheThe\nThe\nTheThe\nTheThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\n\nThe\n\nThe\n\nThe\n\nThe\n\nThe\nThe\nThe\nThe\nTheThe\nTheTheTheThe\nThe\nTheTheTheThe\nThe\nThe\nThe\nTheThe\nThe\nTheThe\nTheThe\nThe\nTheThe\nTheThe\nThe\nTheThe\nThe\nTheThe\nTheThe\nThe\nTheThe\nTheThe\nThe\nTheThe\nTheThe\nThe\nTheThe\nTheThe\nThe\nThe\nThe\nThe\nThe\n\nThe\nTheThe\nThe\nThe\nThe\nTheThe\nThe\nThe\nTheThe\nThe\nThe\nThe\nThe\n\nThe\n\nThe\n\nTheThe\nThe\nThe\nTheThe\nTheThe\nTheTheTheTheTheThe\nThe\nTheThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\n\nTheThe\n\nTheThe\n\nTheThe\nTheThe\nThe\nTheThe\nTheThe\nThe\nTheThe\nThe\nThe\nThe\n\nThe\n\nThe\n\nTheThe\nThe\nTheThe\nTheThe\nTheThe\nThe\nTheThe\nThe\nTheThe\nTheThe\nThe\n\nTheThe\nTheThe\nTheTheThe\nTheThe\nTheTheTheTheThe\nTheThe\nTheTheTheTheThe\nThe\nThe\nTheThe\nThe\nTheTheTheTheThe\nTheThe\nTheTheTheTheTheThe\nTheTheTheTheTheThe\nThe\nTheTheTheTheTheThe\nTheTheTheTheTheTheThe\nThe\nTheTheTheTheTheThe\nThe\nTheTheTheTheTheTheThe\nTheTheTheTheTheTheTheTheThe\nTheTheTheTheTheTheTheThe\nTheTheTheTheTheTheTheTheTheTheTheTheTheTheThe"
+    },
+    {
+      "sample_id": 963,
+      "subject": "college_chemistry",
+      "gold": "C",
+      "prediction": "D",
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 25.53767490098835,
+      "text": "The\nThe question is: \" \"What is the ratio of\" and the options is a multiple choice \\boxed{D}} with with four options labeled A, B, C, D. The options are are:\n\n as given:\nA A:1.011\n B B:1.0\n C C:1.0\n\nD D:1..000The options is a the the of a magnetic, the the of of a chemical, and the the of of a water. The question the of of a water. The the of of of a chemical, the the the of of a water, and the the of of of a water. The the of of a water, the the the of of a chemical, and the the of of of a water. The the of of of a water, the the the of of a chemical, and the the of of of water. The the of of of a water, the the the of of a chemical, and the the of of of water. The the of of of a water, the the the of of a chemical, and the the of of of water. The the the of of a water, the the the of of a chemical, and the the of of of water. The the the of of a water, the the the of of a chemical, and the the of of of water. The the the of of a water, the the the of of a chemical, and the the of of of water. The the the of of a water, the the the of of a chemical, and the the of of of water. The the the the of a water, the the the of of a chemical, and the the of of of water. The the the the of a water, the the the of of a chemical, and the the of of of water. The the the the of a water, the the the of of a chemical, and the the of of of water. The the the the of a water, the the the of of a chemical, and the the of of of water. The the the the the of of a water, the the the of of a chemical, and the the of of of water. The the the the the of of a water, the the the of of a chemical, and the the of of of water. the the the the of of a water, the the the of of a chemical, and the the of of of water. the the the the the of a water"
+    },
+    {
+      "sample_id": 4750,
+      "subject": "high_school_physics",
+      "gold": "B",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 25.2537836219999,
+      "text": "The\nThe question is: \" which of of the mass at the the surface of of Mars is closest to the gravitational field of Mars?\" The options are A: 10 N/kg, B: 4 N/kg,, C: 2 N/kg,, D: 0 N/kg.\n\nThe gravitational field is given by \\( g = \\frac{GM}{r^2}\\). where \\( is is the radius of the, and \\(M\\) is the mass.\n\nThe mass of the the the surface is is is the of of of the, so \\(M of the mass is is the of of of the Earth. The radius of of the of of the is is is the of of of the Earth,, so \\( radius of the radius of is is the of of of of the Earth, which \\( of the radius of the radius of the is the of of of of of the Earth, so \\(r of the radius of the radius of is the the of the of of of of the Earth,, which \\( of of of the of the radius of the Earth, of of the of of of the Earth, which \\(r of of the radius of the radius of is the of of the of of of of the Earth, so of of the radius of the radius of the is the of of the of of of the Earth, which is of of the radius of the radius of the is, which is of of of the of of the Earth, so of of of the radius of the radius of the is the of the of of of of the Earth, which is of of the radius of the radius of the is the of of the of of of Earth, so of of the radius of the radius of the is the of of the of of of the Earth, which is of of the radius of the radius of the is the of the of of of of Earth,, so of of of the radius of the radius of the is the of of the of of of of the Earth, which is of of the radius of the radius of the is is the of of the of of of of the Earth,, so of of of the radius of of the is the of the of the of of of the Earth, which of of the of the of of of of the Earth, so of of of the radius of the radius of the is the of the of of of of the Earth, which of of of the radius of of the is the of of the of of of of the Earth, so of of"
+    },
+    {
+      "sample_id": 9925,
+      "subject": "philosophy",
+      "gold": "A",
+      "prediction": "D",
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 24.31931107098353,
+      "text": "The question is: step step step by step, then give step by step, then \\ \\boxed{} \\. The question is: step step by step, then step step,, then \\boxed{D} \\ step step step, then \\boxed step step step step, then \\boxed step step, then \\ \\boxed{D}.\n\n step by step, then step step, then \\ \\boxed{D} \\ step by step step, then \\boxed step by step,, then \\boxed \\boxed{D} \\ step step step, then \\ step by step,, then \\boxed \\boxed{D} \\ step step step, then \\ \\boxed step by step, then \\ \\boxed \\boxed{D} step step step step, \\boxed{ step by step, then \\boxed{ \\boxed{D} \\ step by step step, then \\boxed{ step by step, then \\ \\boxed{D} \\ step by step step step, \\boxed \\boxed by step,, then \\ \\boxed \\boxed{D} \\ step by step step,, then \\ \\boxed \\boxed by step, then \\ \\boxed{D} \\ step by by step,, then \\boxed \\boxed by step,, then \\ \\boxed \\boxed{DD} \\ step by step step, then \\ \\boxed step by step step, then \\boxed \\boxed by step, then \\ \\boxed{D} \\ step by by step,, then \\boxed \\boxed by step,, then \\ \\boxed \\boxed{DD} \\ step by step step,, then \\boxed \\boxed by step step,, then \\boxed \\boxedD} \\ step by by step,, then \\boxed \\boxed by by step,, then \\boxed \\boxedD} \\ step by by step,, then \\boxed \\boxed by step step,, then \\boxed \\boxedD} \\ step by by step,, then \\boxed \\boxed by by step,, then \\boxed \\boxedD} \\ step by by step,, then \\boxed \\boxed by by step,, then \\boxed \\boxedD} \\ step by by step,, then \\boxed \\boxed by step, then \\ \\boxed{D} \\ step by by step,, then \\boxed \\boxed by step,, then \\ \\boxed \\boxed{D} \\ step by by step,, then \\ \\boxed \\boxed by step, then \\ \\boxed{D}}"
+    },
+    {
+      "sample_id": 8404,
+      "subject": "moral_disputes",
+      "gold": "B",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 19.77548176399432,
+      "text": "The\nThe question is: \" \"Which following is is an example?\"?\" with options options are A, B, C, D.\n\nThe options are are:\n A. \"The whole is is greater than the part.\"\n B. \"The light of the, is signed to us us.\"\n C.. \"The things is greater than than the part.\"\n D.. \"Man is is a rational being.\"\n\nThe.\n\nThe question is: \"Which following is an an example?\"?\" and the options is \" \"The following is is an example?\" with the options listed A A, B B, C, C, D D D.\n\n.\n\nThe options are are:\n A. \"The whole is greater than the part.\"\n B.. \"The light of the, is is signed to us us C.. \"The things is greater than the part.\"\n D.. \"Man is is a rational being.\"\n\nThe question is: \" which following is an an example?\" and the options is \" \"The following is an an example?\" with options are A A, B B,, C C C,, D D.\n\n.\n\nThe options are are:\nA. \" is greater than the part.\"\n B. \" is is signed to us us C. \" is greater than the part.\"\n D. \" is a a rational being.\"\n\nThe question is: \"Which following is an an example?\"\" and the options is \" \"The following is an an example?\"\" with the options options are A, B,, C, D.\n\nThe options are:\n:\nA. \" is greater than the part.\"\n B. \" is is signed to us us.\"\n C. \" is greater than the part part.\"\n D. \" is is a rational being.\"\n\n.\n\nThe question is: \" which following is an an example?\" and the options is \" \"The following is an example?\"?\" with the options are are A, B B, C, C, D D.\n\n.\n\nThe options is:\n:\nA. \" is greater than the part.\"\nB. \" is signed to us us us.\"\nC. \" is greater than the part part.\"\n D. \" is is a rational being.\n\nThe question is: \" which following an example?\"?\" and the options is \"The following is an an example?\" with the options are are A, B, C, D.\n\n.\n\nThe options is:\n:\nA. is greater than the part.\n B. is is signed to us us.\n C. is greater than the part part D. is is is"
+    },
+    {
+      "sample_id": 6928,
+      "subject": "machine_learning",
+      "gold": "B",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 20.150246716017136,
+      "text": "The\nThe question is: \" \"Which of the\"\"\" and the options is a \"yes\"\" with a options list. The options are:\nA A\nB B B\nC C C\nD D D\n\nThe question is: \"Which of the the\" is\"\"?\" and the options are a list of four.\n\nThe B question is:: \" \"Which of the the\"\" is\"?\"\" and the the options are a list list.\n\nThe B B question is: \"Which of the the\"\" is\"?\"\" and the options options are a list list.\n\nThe list is:\n:\nA A\n\nB B B\nC C\n C\n\n\nThe B B question question is: \" \"Which of the the\" is?\"?\" and the the options are a list list.\n\nThe B B question question is: \" \"Which of the the\" is?\"?\" and the the options are a list list.\n\nThe B B B question is: \" \"Which of the the\" is?\"?\" and the the options are a list list.\n\nThe B B B question is: \"Which of the the\" is?\" and the the options are a list list.\n\nThe B B B question is: \"Which\" the\"\"\" is?\"\" and the the options are a list list.\n\n the B B B question is: \" \"Which of the the\"\" is?\"?\" and the the options are a list list.\n\nThe B B B question question is: \" \"Which of the the\" is?\"?\" and the the options are a list list.\n\nThe B B B question is: \" \"Which of the the\" is?\"?\" and and the the options are a list list.\n\nThe B B B question question is: \" \" of the the\" is?\" and and the the options are a list list.\n\nThe B B B question question is: \"Which\"\"\" is?\" and and the the\" is a list list.\n\n the B B B question question: \"Which\" is\"\" is and and the the\" is a list list.\n\nThe B B B B question question: \"Which\" is\" is\" and and the the\" is a list list.\n\nThe B B B B question: \"Which\"\"\" is\" and and the the\" is a list list list.\n\n.\n\nTheB B B B question: \"Which\" is\" is\" and and the the\" is a list list list.\n\n the B B B question: \" B B"
+    },
+    {
+      "sample_id": 10754,
+      "subject": "professional_law",
+      "gold": "D",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 20.000915087002795,
+      "text": "The\nThe\nThe\nThe\nThe\n\nThe\n\nThe\nThe\nTheThe\nTheThe\nThe\nThe\nThe\nThe\nTheThe\nThe\nThe\nThe\nTheThe\nTheThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\n\nThe\n\nThe\n\nThe\nTheThe\nThe\nTheThe\nTheThe\nThe\nThe\nThe\nThe\n\nThe\nThe\nTheThe\nThe\nTheThe\nTheThe\nThe\nTheThe\nTheThe\nThe\nTheThe\nTheThe\nThe\nThe\n\nThe\n\nThe\n\nThe\nThe\nTheThe\nTheTheThe\nThe\nThe\nTheTheThe\nThe\nTheThe\nThe The\nTheTheTheThe\nTheThe\nTheThe\nTheThe\nTheTheTheThe\nThe\nTheThe\nTheTheTheThe\nThe\nTheThe\nTheTheTheTheThe\nThe\nThe\nTheTheTheTheThe\nThe\nThe\nTheTheTheTheTheTheThe\nThe\nTheTheTheTheTheTheThe\nTheThe\nTheThe\nTheTheTheTheTheThe\nTheThe\nTheTheTheTheTheThe\nTheThe\nTheTheTheTheTheTheTheThe\nThe\nTheThe\nTheTheTheTheThe\nThe\nTheThe\nTheTheThe\nTheThe\nTheTheTheTheThe\nTheThe\nThe\nTheThe\nTheThe\nTheThe\nTheTheTheTheTheTheThe\nThe\nTheTheTheTheTheTheThe\nTheThe\nTheTheTheTheTheThe\nTheThe\nThe\nTheThe\nTheTheTheTheThe\nTheThe\nThe\nTheThe\nTheTheTheTheThe\nThe\nTheThe\nTheTheTheTheTheThe\nThe\nThe\nThe\nThe\nTheTheTheTheTheTheTheThe\nThe\nTheThe\nTheTheTheTheThe\nThe\nTheTheTheTheTheTheThe\nThe\nTheThe\nTheTheTheTheTheTheTheThe\nThe\nThe\nTheTheTheTheTheTheThe\nThe\nTheTheTheTheTheTheThe\nTheThe\nTheTheTheTheTheTheTheThe\nThe\nTheThe\nTheTheTheTheTheTheTheTheTheThe"
+    },
+    {
+      "sample_id": 9371,
+      "subject": "moral_scenarios",
+      "gold": "A",
+      "prediction": null,
+      "correct": false,
+      "generated_tokens": 512,
+      "seconds": 19.980397068022285,
+      "text": "The\nThe\nThe\nThe\nThe\n\nThe\n\nThe\nThe\nThe\n\nThe\n\nThe\nThe\n\nThe\n\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe\nThe, \\boxed, \\boxed, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\,, \\,, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\, \\,"
+    }
+  ]
+}
