@@ -87,6 +87,9 @@ def main():
         },
         ops_implementation=ops,
     ).eval()
+    mask_id = model.config.mask_token_id
+    if mask_id is None:
+        raise ValueError("The model config does not define mask_token_id.")
     results = []
     for prompt_text in args.prompt:
         messages = [{"role": "user", "content": prompt_text}]
@@ -98,7 +101,7 @@ def main():
         output = decode(
             model,
             prompt,
-            mask_id=tokenizer.mask_token_id,
+            mask_id=mask_id,
             eos_id=tokenizer.eos_token_id,
             max_new_tokens=args.max_new_tokens,
             block_size=args.block_size,
@@ -110,7 +113,7 @@ def main():
             "prompt": prompt_text,
             "text": tokenizer.decode(generated, skip_special_tokens=True),
             "generated_tokens": generated.numel(),
-            "mask_tokens_remaining": generated.eq(tokenizer.mask_token_id).sum().item(),
+            "mask_tokens_remaining": generated.eq(mask_id).sum().item(),
             "seconds": time.perf_counter() - started,
         }
         results.append(result)

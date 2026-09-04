@@ -86,6 +86,23 @@ Evaluate the AR control with ordinary causal generation and the BDLM with block 
 
 Then run `python scripts/maple/gate_bdlm.py metrics.json`. Decoder work passes only if BDLM reaches at least 95% of the AR aggregate and no benchmark drops more than 5 absolute points.
 
+For zero-shot MMLU, score the single next choice token instead of generating a
+reasoning trace:
+
+```bash
+python scripts/maple/eval_mmlu_bdlm.py \
+  --model artifacts/maple-preview --mode ar \
+  --output-json results/base-ar-mmlu.json
+
+python scripts/maple/eval_mmlu_bdlm.py \
+  --model exports/maple-fast-dllm-v2 --mode bdlm --block-size 32 \
+  --output-json results/bdlm-mmlu.json
+```
+
+Both paths apply Maple's chat template and restrict the decision to the four
+single-token choices. The BDLM path performs one masked, block-causal forward
+pass and reads the shifted logits for that mask.
+
 After the gate passes, the correctness-first, no-KV-cache decoder is:
 
 ```bash

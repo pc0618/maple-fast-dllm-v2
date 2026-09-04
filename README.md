@@ -70,21 +70,25 @@ residual mask tokens and passed their simple semantic checks. The strict
 lm-eval gate remains false because ARC-Easy dropped by 0.07, beyond its 0.05
 per-task limit. Evaluation metrics: [Weights & Biases](https://wandb.ai/pranshu-01-c-stanford-university/maple-bdlm/runs/maple-bdlm-switch-aux-250m-evals-20260903).
 
-Full 5-shot MMLU over all 57 subjects and 14,042 samples shows essentially
-unchanged retained causal/AR capability:
+The corrected MMLU evaluator uses zero-shot prompts, Maple's native chat
+template, and a single answer-token decision restricted to `A/B/C/D`. For the
+BDLM checkpoint it appends one mask token and reads the shifted choice logits
+from one block-causal denoising forward pass. It does not generate a reasoning
+trace or run a multi-step sampler.
 
-| MMLU group | Base AR | BDLM, 250M | Change |
-|---|---:|---:|---:|
-| Aggregate | 22.853% | 22.874% | +0.021 pp |
-| Humanities | 24.187% | 24.145% | -0.043 pp |
-| Social sciences | 21.677% | 21.709% | +0.032 pp |
-| STEM | 21.250% | 21.345% | +0.095 pp |
-| Other | 23.624% | 23.656% | +0.032 pp |
+| 32-example protocol gate | Base AR | BDLM, 250M |
+|---|---:|---:|
+| Accuracy | 56.25% | 34.38% |
+| Evaluation time | 28.83 s | 9.59 s |
 
-The aggregate standard error is approximately 0.354 percentage points for
-both models, so the difference is not statistically meaningful. Runs:
-[base](https://wandb.ai/pranshu-01-c-stanford-university/maple-bdlm/runs/bujn9ozj),
-[step 477](https://wandb.ai/pranshu-01-c-stanford-university/maple-bdlm/runs/ibnwdkqp).
+The base gate is consistent with the approximately 57% MMLU score reported by
+the Maple developers, but 32 examples are too few for a checkpoint comparison.
+The full 14,042-example paired run was submitted on eight H200 GPUs; its final
+results will replace this gate when complete. Raw gate outputs are under
+`results/mmlu-zero-shot-one-token/`.
+
+Earlier 5-shot bare-label likelihood results around 22.9% used an incompatible
+prompt/scoring path and are superseded by this evaluator.
 
 An earlier checkpoint at step 1,272 (approximately 667M source tokens) predates
 the normalized Switch-loss experiment:
@@ -110,7 +114,7 @@ quality claim.
 - `overlay/veomni/models/transformers/maple/`: Maple registration, attention,
   ternary-QAT, MoE, and patchgen implementation.
 - `overlay/scripts/maple/`: dataset preparation, profiling, supervision,
-  checkpoint export, lm-eval orchestration, quality gate, and BDLM decoding.
+  checkpoint export, MMLU evaluation, quality gate, and BDLM decoding.
 - `results/`: raw preliminary evaluation JSON; no model weights or datasets.
 
 ## Reproduce
@@ -130,11 +134,26 @@ See `overlay/scripts/maple/README.md` for data preparation, training, export,
 and decoding commands. The supervisor currently contains node-specific paths
 and W&B identifiers; change those constants before running elsewhere.
 
+Run zero-shot MMLU choice scoring with:
+
+```bash
+python scripts/maple/eval_mmlu_bdlm.py \
+  --model artifacts/maple-preview \
+  --mode ar \
+  --output-json results/base-ar.json
+
+python scripts/maple/eval_mmlu_bdlm.py \
+  --model exports/maple-fast-dllm-v2 \
+  --mode bdlm --block-size 32 \
+  --output-json results/step477-bdlm.json
+```
+
 ## Scope and caveats
 
 - Checkpoints, datasets, caches, W&B credentials, and machine traces are not
   included.
-- HellaSwag, ARC-Easy, and PIQA use `--limit 100`; full MMLU is reported above.
+- HellaSwag, ARC-Easy, and PIQA use `--limit 100`; the checked-in MMLU result is
+  a 32-example protocol gate pending the full run.
 - The current decoder is correctness-first and does not yet implement the
   inference optimizations needed to demonstrate Fast-dLLM v2 latency claims.
 - This work is unaffiliated with the upstream VeOmni, Fast-dLLM, and Maple

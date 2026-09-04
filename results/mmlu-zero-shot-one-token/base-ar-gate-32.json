@@ -1,0 +1,383 @@
+{
+  "summary": {
+    "model": "artifacts/maple-preview",
+    "mode": "ar",
+    "accuracy": 0.5625,
+    "parse_rate": 1.0,
+    "correct": 18,
+    "examples": 32,
+    "generated_tokens": 32,
+    "tokens_per_second": 1.110034104992089,
+    "seconds": 28.82794308399025,
+    "seed": 1234,
+    "num_fewshot": 0,
+    "max_new_tokens": 2048,
+    "one_token": true,
+    "block_size": null,
+    "subblock_size": null,
+    "threshold": null,
+    "shard_index": 0,
+    "num_shards": 1,
+    "subjects": {
+      "anatomy": {
+        "accuracy": 1.0,
+        "count": 1
+      },
+      "computer_security": {
+        "accuracy": 1.0,
+        "count": 1
+      },
+      "electrical_engineering": {
+        "accuracy": 0.0,
+        "count": 1
+      },
+      "elementary_mathematics": {
+        "accuracy": 0.5,
+        "count": 4
+      },
+      "high_school_european_history": {
+        "accuracy": 1.0,
+        "count": 2
+      },
+      "high_school_macroeconomics": {
+        "accuracy": 1.0,
+        "count": 2
+      },
+      "high_school_mathematics": {
+        "accuracy": 0.5,
+        "count": 2
+      },
+      "high_school_microeconomics": {
+        "accuracy": 1.0,
+        "count": 1
+      },
+      "high_school_psychology": {
+        "accuracy": 0.0,
+        "count": 1
+      },
+      "high_school_statistics": {
+        "accuracy": 1.0,
+        "count": 1
+      },
+      "human_sexuality": {
+        "accuracy": 0.3333333333333333,
+        "count": 3
+      },
+      "miscellaneous": {
+        "accuracy": 0.3333333333333333,
+        "count": 3
+      },
+      "moral_scenarios": {
+        "accuracy": 0.3333333333333333,
+        "count": 3
+      },
+      "professional_law": {
+        "accuracy": 0.0,
+        "count": 2
+      },
+      "professional_medicine": {
+        "accuracy": 1.0,
+        "count": 1
+      },
+      "professional_psychology": {
+        "accuracy": 0.6666666666666666,
+        "count": 3
+      },
+      "world_religions": {
+        "accuracy": 1.0,
+        "count": 1
+      }
+    },
+    "complete": true
+  },
+  "records": [
+    {
+      "sample_id": 3431,
+      "subject": "high_school_european_history",
+      "gold": "C",
+      "prediction": "C",
+      "correct": true,
+      "generated_tokens": 1,
+      "seconds": 9.358147958992049
+    },
+    {
+      "sample_id": 2015,
+      "subject": "electrical_engineering",
+      "gold": "D",
+      "prediction": "B",
+      "correct": false,
+      "generated_tokens": 1,
+      "seconds": 7.761253813005169
+    },
+    {
+      "sample_id": 11392,
+      "subject": "professional_law",
+      "gold": "A",
+      "prediction": "D",
+      "correct": false,
+      "generated_tokens": 1,
+      "seconds": 9.335998075999669
+    },
+    {
+      "sample_id": 1488,
+      "subject": "computer_security",
+      "gold": "A",
+      "prediction": "A",
+      "correct": true,
+      "generated_tokens": 1,
+      "seconds": 0.08763781299057882
+    },
+    {
+      "sample_id": 4137,
+      "subject": "high_school_macroeconomics",
+      "gold": "D",
+      "prediction": "D",
+      "correct": true,
+      "generated_tokens": 1,
+      "seconds": 0.08296814799541607
+    },
+    {
+      "sample_id": 2121,
+      "subject": "elementary_mathematics",
+      "gold": "D",
+      "prediction": "C",
+      "correct": false,
+      "generated_tokens": 1,
+      "seconds": 0.08667711199086625
+    },
+    {
+      "sample_id": 5067,
+      "subject": "high_school_psychology",
+      "gold": "B",
+      "prediction": "D",
+      "correct": false,
+      "generated_tokens": 1,
+      "seconds": 0.08017107499472331
+    },
+    {
+      "sample_id": 137,
+      "subject": "anatomy",
+      "gold": "C",
+      "prediction": "C",
+      "correct": true,
+      "generated_tokens": 1,
+      "seconds": 0.07988240499980748
+    },
+    {
+      "sample_id": 4583,
+      "subject": "high_school_microeconomics",
+      "gold": "B",
+      "prediction": "B",
+      "correct": true,
+      "generated_tokens": 1,
+      "seconds": 0.07750416100316215
+    },
+    {
+      "sample_id": 13982,
+      "subject": "world_religions",
+      "gold": "A",
+      "prediction": "A",
+      "correct": true,
+      "generated_tokens": 1,
+      "seconds": 0.07783989199378993
+    },
+    {
+      "sample_id": 6383,
+      "subject": "human_sexuality",
+      "gold": "C",
+      "prediction": "C",
+      "correct": true,
+      "generated_tokens": 1,
+      "seconds": 0.07815979700535536
+    },
+    {
+      "sample_id": 8795,
+      "subject": "moral_scenarios",
+      "gold": "C",
+      "prediction": "B",
+      "correct": false,
+      "generated_tokens": 1,
+      "seconds": 0.07994074700400233
+    },
+    {
+      "sample_id": 5628,
+      "subject": "high_school_statistics",
+      "gold": "D",
+      "prediction": "D",
+      "correct": true,
+      "generated_tokens": 1,
+      "seconds": 0.07857518800301477
+    },
+    {
+      "sample_id": 8744,
+      "subject": "moral_scenarios",
+      "gold": "B",
+      "prediction": "B",
+      "correct": true,
+      "generated_tokens": 1,
+      "seconds": 0.08392894700227771
+    },
+    {
+      "sample_id": 12575,
+      "subject": "professional_psychology",
+      "gold": "C",
+      "prediction": "D",
+      "correct": false,
+      "generated_tokens": 1,
+      "seconds": 0.0783540310076205
+    },
+    {
+      "sample_id": 10922,
+      "subject": "professional_law",
+      "gold": "B",
+      "prediction": "A",
+      "correct": false,
+      "generated_tokens": 1,
+      "seconds": 0.08622831900720485
+    },
+    {
+      "sample_id": 2184,
+      "subject": "elementary_mathematics",
+      "gold": "B",
+      "prediction": "B",
+      "correct": true,
+      "generated_tokens": 1,
+      "seconds": 0.07798443800129462
+    },
+    {
+      "sample_id": 7683,
+      "subject": "miscellaneous",
+      "gold": "B",
+      "prediction": "C",
+      "correct": false,
+      "generated_tokens": 1,
+      "seconds": 0.07840471400413662
+    },
+    {
+      "sample_id": 6331,
+      "subject": "human_sexuality",
+      "gold": "C",
+      "prediction": "B",
+      "correct": false,
+      "generated_tokens": 1,
+      "seconds": 0.07835855800658464
+    },
+    {
+      "sample_id": 7432,
+      "subject": "miscellaneous",
+      "gold": "C",
+      "prediction": "B",
+      "correct": false,
+      "generated_tokens": 1,
+      "seconds": 0.07828780100680888
+    },
+    {
+      "sample_id": 8113,
+      "subject": "miscellaneous",
+      "gold": "C",
+      "prediction": "C",
+      "correct": true,
+      "generated_tokens": 1,
+      "seconds": 0.08569255800102837
+    },
+    {
+      "sample_id": 3292,
+      "subject": "high_school_european_history",
+      "gold": "D",
+      "prediction": "D",
+      "correct": true,
+      "generated_tokens": 1,
+      "seconds": 0.08603365000453778
+    },
+    {
+      "sample_id": 8919,
+      "subject": "moral_scenarios",
+      "gold": "C",
+      "prediction": "B",
+      "correct": false,
+      "generated_tokens": 1,
+      "seconds": 0.07989489700412378
+    },
+    {
+      "sample_id": 12556,
+      "subject": "professional_psychology",
+      "gold": "A",
+      "prediction": "A",
+      "correct": true,
+      "generated_tokens": 1,
+      "seconds": 0.0782080130011309
+    },
+    {
+      "sample_id": 2181,
+      "subject": "elementary_mathematics",
+      "gold": "A",
+      "prediction": "A",
+      "correct": true,
+      "generated_tokens": 1,
+      "seconds": 0.07788204000098631
+    },
+    {
+      "sample_id": 12818,
+      "subject": "professional_psychology",
+      "gold": "D",
+      "prediction": "D",
+      "correct": true,
+      "generated_tokens": 1,
+      "seconds": 0.08040594299382064
+    },
+    {
+      "sample_id": 4067,
+      "subject": "high_school_macroeconomics",
+      "gold": "C",
+      "prediction": "C",
+      "correct": true,
+      "generated_tokens": 1,
+      "seconds": 0.07802892998734023
+    },
+    {
+      "sample_id": 4335,
+      "subject": "high_school_mathematics",
+      "gold": "C",
+      "prediction": "C",
+      "correct": true,
+      "generated_tokens": 1,
+      "seconds": 0.07789773400872946
+    },
+    {
+      "sample_id": 12397,
+      "subject": "professional_medicine",
+      "gold": "D",
+      "prediction": "D",
+      "correct": true,
+      "generated_tokens": 1,
+      "seconds": 0.07975505701324437
+    },
+    {
+      "sample_id": 6432,
+      "subject": "human_sexuality",
+      "gold": "A",
+      "prediction": "C",
+      "correct": false,
+      "generated_tokens": 1,
+      "seconds": 0.07782023699837737
+    },
+    {
+      "sample_id": 4328,
+      "subject": "high_school_mathematics",
+      "gold": "B",
+      "prediction": "D",
+      "correct": false,
+      "generated_tokens": 1,
+      "seconds": 0.07785987999523059
+    },
+    {
+      "sample_id": 2202,
+      "subject": "elementary_mathematics",
+      "gold": "D",
+      "prediction": "A",
+      "correct": false,
+      "generated_tokens": 1,
+      "seconds": 0.0776945230027195
+    }
+  ]
+}
